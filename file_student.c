@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 struct student
 {
@@ -24,11 +25,11 @@ int main()
     printf("Error ! ! !");
     exit(1);
   }
-
-  printf("Choose the operation:- \n 1. Insert Data \t 2. Display Data \t 3. Modify Data \t 4. Delete Data \t 5. Search Data :-  ");
-  scanf("%d",&x);
   while(1)
   {
+  printf("Choose the operation:- \n 1. Insert Data \t 2. Display Data \t 3. Modify Data \t 4. Delete Data \t 5. Search Data :-  ");
+  scanf("%d",&x);
+
     switch(x)
     {
       case 1: insert();
@@ -160,7 +161,7 @@ void ddelete()
 
   s.marks='\0';
   s.roll='\0';
-  s.name=;
+  strcpy(&s.name[0]," ");
 
   fprintf(fptr,"%s %d %f", s.name,s.roll,s.marks);
 
