@@ -1,0 +1,158 @@
+/*Implement priority queue as ADT using single linked list for servicing patients in an hospital
+with priorities as 
+i) Serious (top priority) 
+ii) medium illness (medium priority) 
+iii) General (Least priority)*/
+
+#include<iostream>
+#include<string.h>
+using namespace std;
+typedef struct patient
+{
+   int id;
+   char name[20];
+   struct patient *next;
+}patient;
+
+class queue
+{
+   patient *front,*rear;
+   public:
+   queue();
+   int isempty();
+   void enque(int i,char n[20]);
+   void deque();
+   void print(); 
+};
+
+queue::queue()
+{
+   front=NULL;
+   rear=NULL;
+}
+
+int queue::isempty()
+{
+      if(front==NULL)
+      return 1;
+   return 0;
+}
+void queue::enque(int i,char n[20])
+{
+   patient *p;
+   p=new patient();
+   p->id=i;
+   strcpy(p->name,n);
+   p->next=NULL;
+   
+   if(front==NULL)
+   {
+     front=p;
+     rear=p;
+   }
+   else
+   {
+     rear->next=p;
+     rear=rear->next;
+   }
+}
+void queue::deque()
+{
+  patient *p;
+  p=front;
+  cout<<"\n Patient id -"<<front->id<<",Patient name -"<<front->name<<endl;
+  if(front==rear)
+  {
+     front=NULL;
+     rear=NULL;
+  }
+  else
+  {
+     front=front->next;
+  }
+  delete p;
+}
+void queue::print()
+{
+     patient *p;
+     cout<<"\nPatient id\tPatient name"<<endl;
+  for(p=front;p!=NULL;p=p->next)
+  {
+     cout<<"\n"<<p->id<<"\t\t"<<p->name; 
+  }
+}
+class pq
+{
+   queue q[3];
+   public: 
+   void arrival();
+   void service();
+   void print();
+};
+void pq::arrival()
+{  
+   char pname[20]; 
+   int ptype,pid;
+   cout<<"\n Enter patient id -";
+   cin>>pid;
+   cout<<"\n Enter patient name -";
+   cin>>pname;
+   cout<<"( 0 for serious,1 for medium,2 for general)\n Enter type of the patient -";
+   cin>>ptype;
+   switch(ptype)
+   {
+      case 0:q[0].enque(pid,pname);
+             break;
+      case 1:q[1].enque(pid,pname);
+             break;
+      case 2:q[2].enque(pid,pname);
+             break;
+      default:cout<<"\n Wrong patient type "<<endl;
+   }
+}
+void pq::service()
+{
+   int i=0;
+   while(i<3 && q[i].isempty())
+   {
+      i++;
+   }
+   if(i==3)
+   {
+      cout<<"\n No patient to be serviced!!"<<endl;
+   }
+   else
+   { 
+   q[i].deque();
+   }
+}
+void pq::print()
+{
+   cout<<"\n\tSerious patient";
+   q[0].print();
+   cout<<"\n\tMedium illness";
+   q[1].print();
+   cout<<"\n\tGeneral";
+   q[2].print();
+}
+int main()
+{ 
+  pq pat;
+  int choice;
+  do
+  {
+   cout<<"\n Main Menu \n 1.Arrival of patient \n 2.Service a patient \n 3.Print \n 4.Exit \n Enter your choice -";
+   cin>>choice;
+   switch(choice)
+   {
+      case 1:pat.arrival();
+             break;
+      case 2:pat.service();
+             break;
+      case 3:pat.print();
+             break;
+      case 4:return 0;
+      default:cout<<"\n Invalid choice!! Please enter your choice again."<<endl;
+   }
+  }while(choice!=4);
+}

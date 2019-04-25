@@ -1,0 +1,172 @@
+/*Create Binary tree and perform following operations:
+a. Insert
+b. Display
+c. Depth of a tree
+d. Display leaf-nodes
+e. Create a copy of a tree*/
+
+#include<iostream>
+using namespace std;
+typedef struct tnode
+{
+     char data;
+     struct tnode* left;
+     struct tnode*right;
+}tnode;
+typedef struct node
+{
+struct tnode *add;
+struct node *next;
+}node;
+class stack
+{
+node *top;
+public:
+stack()
+{
+top=NULL;
+}
+int isempty()
+{
+if(top==NULL)
+return 1;
+return 0;
+}
+void push(tnode* x)
+{
+node *p;
+p=new node();
+p->add=x;
+p->next=top;
+top=p;
+}
+tnode *pop()
+{
+node *p;
+tnode *x;
+p=top;
+x=p->add;
+top=top->next;
+delete(p);
+return x;
+}
+};
+
+
+class tree
+{
+stack s;
+public:
+tnode* create()
+{
+	tnode *p;
+	char x;
+	cout<<"\nEnter the data = ";
+	cin>>x;
+
+	if(x=='0')
+	return NULL;
+
+	p=new tnode();
+	p->data=x;
+	cout<<"\nEnter the left node of "<<x<<":";
+	p->left=create();
+	cout<<"\nEnter the right node of "<<x<<":";
+	p->right=create();
+	return p;
+}
+void inorder(tnode* T)
+{
+	if(T!=NULL)
+	{
+		inorder(T->left);
+		cout<<"\t"<<T->data;
+		inorder(T->right);
+	}
+}
+
+
+	
+
+
+int cnt_leaf(tnode *T)
+{
+	int cnt=0;
+	if(T==NULL)
+	return 0;
+	if(T->left==NULL && T->right==NULL)
+	{	cout<<"\t"<<T->data;
+		return 1;
+	}	
+	cnt=cnt_leaf(T->left)+cnt_leaf(T->right);
+	return cnt;
+}
+int height(tnode *T)
+{
+	int hl,hr;
+	if(T==NULL)
+	return 0;
+	if(T->left==NULL && T->right==NULL)
+	return 0;
+	hl=height(T->left);
+	hr=height(T->right);
+	if(hl>hr)
+	return 1+hl;
+	else
+	return 1+hr;
+	
+}
+
+tnode* copy(tnode *T)
+ {
+ 	tnode *P;
+ 	P=NULL;
+ 	if(T!=NULL)
+ 	{
+ 		P=new tnode();
+ 		P->data=T->data;
+ 		P->left=copy(T->left);
+ 		P->right=copy(T->right);
+ 	}
+ 	return P;
+ }
+};
+
+int main()
+{
+	tree t;
+	int choice,cnt;
+	tnode *root,*rt;
+	do
+	{
+	 cout<<" Main Menu"
+               "\n 1.Create tree "
+	       "\n 2.Display tree "
+	       "\n 3.Leaf node Count "
+	       "\n 4.Height Of Tree "
+	       "\n 5.Copy "
+	       "\n 6.Exit\n"
+	       "\n Enter your choice : ";
+	  cin>>choice;
+	  
+	  switch(choice)
+	  {
+	  	case 1:root=t.create();
+	  		break;
+	        case 2:t.inorder(root);
+	  		break;
+	        Case 3:cnt=t.cnt_leaf(root);
+	        	cout<<"\n No. of leaf nodes -"<<cnt;
+	  		break;
+	  	case 4:cnt=t.height(root);
+	        	cout<<"\n Height of tree -"<<cnt;
+	  		break;	
+	  	case 5:cout<<"\n Copied tree - ";
+	  		rt=t.copy(root);   
+	  		t.inorder(rt);
+	  		break;
+	  	case 6:return 0;
+	        default:cout<<"\n Invalid choice!! Please enter your choice again."<<endl;	
+	  }     
+	}while(choice!=6);
+}

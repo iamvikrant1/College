@@ -1,0 +1,209 @@
+/* Consider a friends’ network on face book social web site. Model it as a graph to represent each
+node as a user and a link to represent the fried relationship between them. Store data such as
+date of birth, number of comments for each user.
+1. Find who is having maximum friends
+2. Find who has post maximum and minimum comments
+3. Find users having birthday in this month.
+Hint: (Use adjacency list representation and perform DFS and BFS traversals)*/
+#include<iostream>
+//#include<conio.h>
+using namespace std;
+struct dateob
+{
+	int date;
+	int month;
+	int year;
+};
+
+typedef struct vertex
+{
+	int data;
+	int cost;
+	int comm;
+	struct dateob dob;
+	struct vertex *next;
+}vertex;
+
+
+void birth(vertex *g[10],int v,int mon);
+void maxmincomm(vertex *g[10],int v);
+void maxfriends(vertex *g[10],int v);
+void accept(vertex *g[10],int v,int e);
+void display(vertex *g[10],int v);
+int insert(vertex *g[10],int src,int des);
+
+
+int main()
+{
+	int v,e,ch,s,visit[10],i,mon;
+	vertex *g[10];
+	//clrscr();
+do{
+	cout<<"\nMain Menu\n1.Accept\n2.Display\n3.Find maximum no. of friends\n4.Find max and min no. of comments\n5.Friends having birthday in given month\n8.Exit\nEnter your choice=";
+	cin>>ch;
+	switch(ch)
+	{
+		case 1:	cout<<"Enter graph details\n";
+			cout<<"No of users=";
+			cin>>v;
+			cout<<"\nNo. of edges";
+			cin>>e;
+			accept(g,v,e);
+			cout<<"\nGraph created successfully\n";
+			break;
+		case 2:display(g,v);
+			break;
+		case 3:maxfriends(g,v);
+			break;
+		  case 4:maxmincomm(g,v);
+					break;
+		case 5:cout<<"Enter month=";
+				cin>>mon;
+				birth(g,v,mon);
+			break;
+
+	}
+}while(ch!=8);
+	return 0;
+}
+
+void accept(vertex *g[10],int v,int e)
+{int i,j,src,des,cost;
+
+vertex *start;
+int re;
+	for(i=0;i<v;i++)
+	{start=new vertex;
+	cout<<"\nEnter id=";
+	cin>>start->data;
+	cout<<"No.of comments for user"<<start->data<<"=";
+	cin>>start->comm;
+	 cout<<"Enter date/month/year =";
+	 cin>>start->dob.date>>start->dob.month>>start->dob.year;
+	 g[i]=start;
+	 g[i]->next=NULL;
+	}
+	for(i=0;i<e;i++)
+	{
+		cout<<"Enter friends:\nFriend1 id:=";
+		cin>>src;
+		cout<<"friend2 id:=";
+		cin>>des;
+		//cout<<"Enter cost=";
+		//cin>>cost;
+	       re=insert(g,src,des);
+		re=insert(g,des,src);
+	       if(re==1)
+	       { cout<<"\nEnter appropriate user id\n";
+	       i--;
+	       }
+	}
+}
+
+
+void display(vertex *g[10],int v)
+{vertex *p;
+	int i,j,flag;
+	cout<<"USERS   \t   comments\t   friends \t Date of birth";
+		for(i=0;i<v;i++)
+	{        // cout<<"date:="<<g[i]->dob.date<<"/"<<g[i]->dob.month<<"/"<<g[i]->dob.year;
+		p=g[i]->next;
+		cout<<"\n"<<g[i]->data;
+		flag=0;
+		for(;p!=NULL;p=p->next)
+		{
+			flag++;
+		}
+		cout<<"\t\t"<<g[i]->comm<<"\t\t"<<flag<<"\t\t"<<g[i]->dob.date<<"/"<<g[i]->dob.month<<"/"<<g[i]->dob.year;
+	}
+
+
+}
+
+int insert(vertex *g[10],int src,int des)
+{
+	vertex *start,*p;
+	int i,flag=0;
+	start=new vertex;
+		
+
+
+
+	start->data=g[des]->data;
+	start->dob=g[des]->dob;
+	start->comm=g[des]->comm;
+	       //	start->cost=cost;
+		start->next=NULL;
+		
+	
+
+					if(g[src]->next==NULL)
+			    {	g[src]->next=start;
+				}
+			else
+			{	p=g[src]->next;
+				while(p->next!=NULL)
+				{              // cout<<"\n="<<p->data;
+						p=p->next;
+				}
+				p->next=start;
+			}
+			return 0;
+}
+
+void maxfriends(vertex *g[10],int v)
+{int max=-1,flag,i,k;
+vertex *p;
+     for(i=0;i<v;i++)
+     {p=g[i]->next;
+		flag=0;
+		for(;p!=NULL;p=p->next)
+			flag=flag+1;
+
+		if(max<flag)
+		{	max=flag;
+			k=g[i]->data;
+		}
+     }
+
+	cout<<"User "<<k<<" has maximum friends="<<max;
+}
+
+
+void maxmincomm(vertex *g[10],int v)
+{int m,n,i,max,min;
+	max=g[0]->comm;
+	m=g[0]->data;
+	min=g[0]->comm;
+	n=g[0]->data;
+	for(i=0;i<v;i++)
+	{
+		if(max<g[i]->comm)
+		{	max=g[i]->comm;
+			m=g[i]->data;
+		}
+
+		if(min>g[i]->comm)
+		{min=g[i]->comm;
+			n=g[i]->data;
+		}
+	}
+
+	cout<<"\nUser "<<m<<" has maximum comments="<<max;
+	cout<<"\nUser "<<n<<" has minimum comments="<<min;
+}
+
+void birth(vertex *g[10],int v,int mon)
+{
+	int i,flag=0;
+
+	for(i=0;i<v;i++)
+	{
+		if(mon==g[i]->dob.month)
+		{	cout<<"User "<<g[i]->data<<" having birthday on date:"<<g[i]->dob.date;
+			flag=1;
+		}
+	}
+	if(flag==0)
+		cout<<"\nNone of friends having birthday on "<<mon<<" month";
+}
