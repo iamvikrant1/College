@@ -1,0 +1,59 @@
+/*
+Problem Statement: Process control system calls: The demonstration of FORK, EXECVE and WAIT system calls
+along with zombie and orphan states.
+ 
+b. Implement the C program in which main program accepts an integer array. Main program uses
+the FORK system call to create a new process called a child process. Parent process sorts an
+integer array and passes the sorted array to child process through the command line arguments
+of EXECVE system call. The child process uses EXECVE system call to load new program that uses
+this sorted array for performing the binary search to search the particular item in the array.
+*/
+ 
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+#include<unistd.h>
+#include<errno.h>
+#include<sys/wait.h>
+#define MAX 50
+ 
+ 
+void main(int argc, char *argv[])
+{
+ int a[20],n,i;
+ char *c_array[20];
+ pid_t pid;
+ int status;
+ char *newenviron[]={NULL};
+ char *newargv[20];
+  printf("Enter element: ");
+  scanf("%d",&n);
+  char c1[sizeof(int)];
+  char* ch;    
+  snprintf(c1, sizeof(int), "%d", n); //copy those 4bytes
+	ch = malloc(sizeof(c1)); 
+	strcpy(ch, c1); // copy to the array of  				results
+	printf(" program 1 value of n %s\n", ch);
+newargv[0] = argv[1];
+newargv[1] = ch; 
+//newargv[2]=NULL;
+ pid=fork();
+ if(pid==-1)
+   printf("Error on fork\n");
+ 
+ if(pid==0)
+ {
+   execve(argv[1], newargv, newenviron);
+ 
+ }
+else if(pid>0)
+ {
+ // sleep(1);
+  printf("Parent process\n");
+  wait(&status);
+}
+ 
+}
+ 
+ 

@@ -1,0 +1,97 @@
+/*
+Problem Statement: Inter process communication in Linux using following.
+a. Pipes: Full duplex communication between parent and child processes. Parent process writes a
+pathname of a file (the contents of the file are desired) on one pipe to be read by child process
+and child process writes the contents of the file on second pipe to be read by parent process and
+displays on standard output.
+*/
+#include<sys/types.h>
+#include<stdio.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include<string.h>
+void main()
+{
+    FILE *fptr;
+    char buffer[20];;
+    pid_t pid;
+    char c;
+    char str[100],str1[20];	
+    int fd1[2],fd2[2];
+    pipe(fd1);
+    pipe(fd2);
+    pid=fork();
+    if(pid<0)
+    {
+        perror("fork()");
+    }else if(pid>0)
+    {
+        printf("\nWelcome To Parent Process\n");
+        printf("\nParent:Transferring File To Child Process\n");
+        close(fd1[0]);
+        write(fd1[1],"input.txt",20);
+        close(fd1[1]);
+        //file transferred
+        close(fd2[1]);
+        read(fd2[0],buffer,20);
+        close(fd2[0]);
+        printf("\nParent:File Recieved\n");
+        printf("\nParent:Contents Of the File %s Are As Follows\n",buffer);
+        fptr=fopen(buffer,"r");     //open file in read mode
+        fgets(str1,100,fptr);
+	printf("%s \n",str1);
+        exit(0);
+        
+    }else
+    {
+        printf("\nWelcome To Child Process\n");
+        close(fd1[1]);
+        read(fd1[0],buffer,20);
+        close(fd1[0]);
+        printf("\nChild:File Recieved\n");
+        fptr=fopen(buffer,"a+");
+	printf("\nEnter a Message!!\t");
+	gets(str);
+        fputs(str,fptr);
+        //fprintf(fptr,"Hello World\n");
+        //transferring file to parent process
+        printf("\nChild:Contents Successfully Written To File %s\n",buffer);
+        printf("\nChild:Transferring File To Parent Process\n");
+        close(fd2[0]);
+        write(fd2[1],buffer,20);
+        close(fd2[1]);
+        //file transferred
+    }
+}
+ 
+ 
+/*Output
+Welcome To Parent Process
+ 
+Parent:Transferring File To Child Process
+ 
+Welcome To Child Process
+ 
+Child:File Recieved
+ 
+Enter a Message!!	Welcome to IT Department
+ 
+Child:Contents Successfully Written To File input.txt
+ 
+Child:Transferring File To Parent Process
+ 
+Parent:File Recieved
+ 
+Parent:Contents Of the File input.txt Are As Follows
+Welcome to IT Department
+ 
+ 
+*/
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

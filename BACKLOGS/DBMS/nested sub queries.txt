@@ -1,0 +1,207 @@
+/*
+Implement nested sub queries. Perform a test for set membership (in, not in), set comparison (<some, >=some, <all etc.) and set cardinality (unique, not unique).
+*/
+ 
+ 
+mysql> use myuniversity
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+mysql> show tables;
++------------------------+
+| Tables_in_myuniversity |
++------------------------+
+| advisor                |
+| classroom              |
+| course                 |
+| department             |
+| instructor             |
+| section                |
+| student                |
+| takes                  |
+| teaches                |
+| timeslot               |
++------------------------+
+10 rows in set (0.00 sec)
+ 
+ 
+Q:Find out names of student whose names neither Anushka nor priya
+ 
+mysql> select name from student where name not in ("Anushka","Priya");
++---------+
+| name    |
++---------+
+| Aashish |
+| Rakesh  |
+| Chetan  |
+| Mayuri  |
+| Tanvi   |
++---------+
+5 rows in set (0.00 sec)
+ 
+Q:Find out names of student whose names either Anushka or priya
+ 
+mysql> select name from student where name in ("Anushka","Priya");
++---------+
+| name    |
++---------+
+| Priya   |
+| Anushka |
++---------+
+2 rows in set (0.00 sec)
+ 
+Q:Find out details of student whose names either Anushka or priya
+ 
+mysql> select * from student where name in ("Anushka","Priya");
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  55 | Priya   |        7 | biology  |
+|  57 | Anushka |        9 | history  |
++-----+---------+----------+----------+
+2 rows in set (0.00 sec)
+ 
+Q:Find set of all courses taught in FY I-sem and TY II-sem
+ 
+mysql> select courseid from section where semester="I" AND year="FY" in (select courseid from section where semester="II" AND year="TY");
++----------+
+| courseid |
++----------+
+| bio_1    |
+| bio_2    |
+| his_1    |
++----------+
+3 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is greater than atleast one instructor in biology department
+ 
+mysql> select T.name from instructor as T,instructor as S where T.salary>S.salary and S.deptname="biology";
++------+
+| name |
++------+
+| ABC  |
+| PQR  |
+| EFG  |
+| LMN  |
+| UVW  |
++------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is greater than atleast one instructor in biology department
+ 
+mysql> select name from instructor where salary > some(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| ABC  |
+| PQR  |
+| EFG  |
+| LMN  |
+| UVW  |
++------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is greater than atleast one instructor in physics department
+ 
+mysql> select T.name from instructor as T,instructor as S where T.salary>S.salary and S.deptname="physics";
++------+
+| name |
++------+
+| PQR  |
+| PQR  |
+| LMN  |
+| LMN  |
++------+
+4 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is greater than atleast one instructor in physics department
+ 
+mysql> select name from instructor where salary > some(select salary from instructor where deptname="physics");
++------+
+| name |
++------+
+| PQR  |
+| LMN  |
++------+
+2 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is greater than all the instructor in biology department
+ 
+mysql> select name from instructor where salary > all(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| ABC  |
+| PQR  |
+| EFG  |
+| LMN  |
+| UVW  |
++------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is less than atleast one instructor in biology department
+ 
+mysql> select name from instructor where salary < all(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| XYZ  |
++------+
+1 row in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary not equall to all instructor in biology department
+ 
+mysql> select name from instructor where salary <> all(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| ABC  |
+| PQR  |
+| EFG  |
+| XYZ  |
+| LMN  |
+| UVW  |
++------+
+6 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is greater than atleast one instructor in biology department
+ 
+mysql> select name from instructor where salary > some(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| ABC  |
+| PQR  |
+| EFG  |
+| LMN  |
+| UVW  |
++------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is equal to atleast one instructor in biology department
+ 
+mysql> select name from instructor where salary = some(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| STU  |
++------+
+1 row in set (0.00 sec)
+ 
+Q:Find the names of instructor whose salary is not equal to instructor in biology department
+ 
+mysql> select name from instructor where salary <> some(select salary from instructor where deptname="biology");
++------+
+| name |
++------+
+| ABC  |
+| PQR  |
+| EFG  |
+| XYZ  |
+| LMN  |
+| UVW  |
++------+
+6 rows in set (0.00 sec)
+ 
+ 

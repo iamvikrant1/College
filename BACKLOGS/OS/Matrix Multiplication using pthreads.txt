@@ -1,0 +1,158 @@
+/*
+Problem Statement: Implement multithreading for Matrix Multiplication using pthreads.
+*/
+ 
+ 
+#include<stdio.h>
+#include<pthread.h>
+int a[10][10],b[10][10],c[10][10];
+ 
+void disp(int x[10][10],int y,int z);
+int i,j,k,n,m,p,q;
+void accept(int x[10][10],int y,int z)
+{
+int i,j;
+ 
+}
+void *matmul(void *ptr)
+{
+int result;
+result=a[i][k]*b[k][j];
+pthread_exit((void *)result);
+}
+ 
+ 
+int main()
+{
+pthread_t tid[15];
+int r;
+printf("\nenter the number of rows and columns of 1st matrix!!\t");
+scanf("%d %d",&n,&m);
+printf("\nEnter the elementsof 1st matrix!!\t");
+for(i=0;i<n;i++)
+{
+	for(j=0;j<m;j++)
+	{
+		scanf("%d",&a[i][j]);
+	}
+}
+printf("\nenter the number of rows and columns of 2nd matrix!!\t");
+scanf("%d %d",&p,&q);
+if(m!=p)
+{
+printf("the columns of 1st matrix and rows of 2nd matrix should be same!! ");
+printf("\nreenter the number of rows and columns of 2nd matrix!!\t");
+scanf("%d %d",&p,&q);
+printf("\nEnter the elementsof 2nd matrix!!\t");
+for(i=0;i<p;i++)
+{
+	for(j=0;j<q;j++)
+	{
+		scanf("%d",&b[i][j]);
+	}
+}
+}
+else{
+printf("\nEnter the elementsof 2nd matrix!!\t");
+for(i=0;i<p;i++)
+{
+	for(j=0;j<q;j++)
+	{
+		scanf("%d",&b[i][j]);
+	}
+}
+}
+printf("\n 1st matrix!!\n");
+disp(a,n,m);
+printf("\n 2nd matrix!!\n");
+disp(b,p,q);
+ 
+for(i=0;i<n;i++)
+{
+	for(j=0;j<q;j++)
+	{
+		c[i][j]=0;
+		for(k=0;k<p;k++)
+		{
+		pthread_create(&tid[k],NULL,matmul,NULL);
+		pthread_join(tid[k],(void *)&r);
+		c[i][j]=c[i][j]+r;
+		}
+	}
+}
+printf("\n  RESULT!!\n");
+disp(c,n,q);
+}
+ 
+void disp(int x[10][10],int y,int z)
+{
+int i,j;
+for(i=0;i<y;i++)
+{
+	for(j=0;j<z;j++)
+	{
+		printf("%d",x[i][j]);
+		printf("\t");
+	}
+printf("\n");
+}
+}
+/*
+OUTPUT
+administrator@ubuntu:~/Desktop$ gcc -o c matrix.c -pthread
+administrator@ubuntu:~/Desktop$ ./c
+ 
+enter the number of rows and columns of 1st matrix!!	3
+3
+ 
+Enter the elementsof 1st matrix!!	1
+1
+1
+1
+1
+1
+1
+1
+1
+ 
+enter the number of rows and columns of 2nd matrix!!	3
+3
+ 
+Enter the elementsof 2nd matrix!!	1
+1
+1
+1
+1
+1
+1
+1
+1
+ 
+ 1st matrix!!
+1	1	1	
+1	1	1	
+1	1	1	
+ 
+ 2nd matrix!!
+1	1	1	
+1	1	1	
+1	1	1	
+ 
+  RESULT!!
+3	3	3	
+3	3	3	
+3	3	3*/
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

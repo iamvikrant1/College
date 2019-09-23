@@ -1,0 +1,567 @@
+/* 
+Write and execute suitable database triggers .Consider row level and statement level triggers.
+*/
+ 
+mysql> use university
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+ 
+ 
+				**Triggers**
+ 
+ 
+mysql> delimiter //
+mysql> create TRIGGER salarycheck before insert on instructor for each row if new.salary>80000 set new.salary=80000;
+    -> end if;
+    -> //
+ 
+mysql> delimiter //
+mysql> CREATE TRIGGER salarycheck BEFORE INSERT ON instructor FOR EACH ROW IF NEW.salary < 20000 THEN SET NEW.salary = 20000; END IF;//
+Query OK, 0 rows affected (0.07 sec)
+ 
+mysql> show triggers;
+    -> //
++-------------+--------+------------+-----------------------------------------------------------+--------+---------+----------+----------------+----------------------+----------------------+--------------------+
+| Trigger     | Event  | Table      | Statement                                                 | Timing | Created | sql_mode | Definer        | character_set_client | collation_connection | Database Collation |
++-------------+--------+------------+-----------------------------------------------------------+--------+---------+----------+----------------+----------------------+----------------------+--------------------+
+| salarycheck | INSERT | instructor | IF NEW.salary < 20000 THEN SET NEW.salary = 20000; END IF | BEFORE | NULL    |          | root@localhost | utf8                 | utf8_general_ci      | latin1_swedish_ci  |
++-------------+--------+------------+-----------------------------------------------------------+--------+---------+----------+----------------+----------------------+----------------------+--------------------+
+1 row in set (0.00 sec)
+ 
+mysql> desc instructor;
+    -> //
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| instID   | int(11)     | NO   | PRI | NULL    |       |
+| name     | varchar(20) | YES  |     | NULL    |       |
+| salary   | int(11)     | YES  |     | NULL    |       |
+| deptname | varchar(20) | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+ 
+mysql> select * from instructor;
+    -> //
++--------+--------+--------+----------+
+| instID | name   | salary | deptname |
++--------+--------+--------+----------+
+|    111 | NewABC |  95000 | computer |
+|    112 | PQR    | 120000 | music    |
+|    113 | EFG    | 100000 | physics  |
+|    114 | XYZ    |  80000 | history  |
+|    115 | LMN    | 120000 | music    |
+|    116 | UVW    | 100000 | physics  |
+|    117 | STU    |  85000 | biology  |
++--------+--------+--------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> insert into instructor values(118,"DSK",15000,history);
+    -> //
+ 
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> select * from instructor;//
++--------+--------+--------+----------+
+| instID | name   | salary | deptname |
++--------+--------+--------+----------+
+|    111 | NewABC |  95000 | computer |
+|    112 | PQR    | 120000 | music    |
+|    113 | EFG    | 100000 | physics  |
+|    114 | XYZ    |  80000 | history  |
+|    115 | LMN    | 120000 | music    |
+|    116 | UVW    | 100000 | physics  |
+|    117 | STU    |  85000 | biology  |
+|    118 | DSK    |  20000 | history  |
++--------+--------+--------+----------+
+8 rows in set (0.00 sec)
+ 
+mysql> select * from student;
+    -> //
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
++-----+---------+----------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> delimiter //
+mysql> CREATE TRIGGER creditcheck BEFORE INSERT on student FOR EACH ROW IF new.tot_cred > 10 THEN SET new.tot_cred=10;
+    -> end if; //
+Query OK, 0 rows affected (0.07 sec)
+ 
+mysql> select * from student;
+    -> //
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
++-----+---------+----------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> insert into student values(58,"Sahil",16,"computer");
+    -> //
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> select * from student;//
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
+|  58 | Sahil   |       10 | computer |
++-----+---------+----------+----------+
+8 rows in set (0.00 sec)
+ 
+mysql> delimiter //
+mysql> //
+ 
+ 
+mysql> select * from classroom;
+    -> //
++----------+--------+----------+
+| building | roomno | capacity |
++----------+--------+----------+
+|        1 |     11 |      120 |
+|        2 |     21 |      120 |
+|        3 |     32 |       60 |
+|        4 |     42 |      180 |
+|        5 |     52 |       60 |
++----------+--------+----------+
+5 rows in set (0.00 sec)
+ 
+mysql> delimiter //
+mysql> CREATE TRIGGER capacitycheck BEFORE INSERT on classroom FOR EACH ROW IF new.capacity>180 THEN SET new.capacity=180 ;
+    -> end if; //
+Query OK, 0 rows affected (0.06 sec)
+ 
+mysql> select * from classroom;
+    -> //
++----------+--------+----------+
+| building | roomno | capacity |
++----------+--------+----------+
+|        1 |     11 |      120 |
+|        2 |     21 |      120 |
+|        3 |     32 |       60 |
+|        4 |     42 |      180 |
+|        5 |     52 |       60 |
++----------+--------+----------+
+5 rows in set (0.00 sec)
+ 
+mysql> insert into classroom values(6,64,188);
+    -> //
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> select * from classroom;
+    -> //
++----------+--------+----------+
+| building | roomno | capacity |
++----------+--------+----------+
+|        1 |     11 |      120 |
+|        2 |     21 |      120 |
+|        3 |     32 |       60 |
+|        4 |     42 |      180 |
+|        5 |     52 |       60 |
+|        6 |     64 |      180 |
++----------+--------+----------+
+6 rows in set (0.00 sec)
+ 
+mysql> select * from student;
+    -> //
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
+|  58 | Sahil   |       10 | computer |
++-----+---------+----------+----------+
+8 rows in set (0.00 sec)
+ 
+mysql> CREATE TRIGGER updatecred BEFORE UPDATE on student FOR EACH ROW IF new.tot_cred>10 THEN SET new.tot_cred=10; end if;//
+Query OK, 0 rows affected (0.08 sec)
+ 
+mysql> select * from student;
+    -> //
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
+|  58 | Sahil   |       10 | computer |
++-----+---------+----------+----------+
+8 rows in set (0.00 sec)
+ 
+mysql> update student set tot_cred=18 where sid=56;
+    -> //
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+ 
+mysql> select * from student;//
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |       10 | computer |
+|  57 | Anushka |        9 | history  |
+|  58 | Sahil   |       10 | computer |
++-----+---------+----------+----------+
+8 rows in set (0.00 sec)
+ 
+ 
+ 
+mysql> select * from marks;
+    -> //
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
++------+------+------+------+
+3 rows in set (0.00 sec)
+ 
+ 
+mysql> CREATE TRIGGER checkmark AFTER INSERT on marks FOR EACH ROW if new.m1>100 then update marks set m1=100 where rno=new.rno; end if;//
+Query OK, 0 rows affected (0.07 sec)
+ 
+ 
+mysql> select * from marks;
+    -> //
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
++------+------+------+------+
+3 rows in set (0.00 sec)
+ 
+mysql> insert into marks values(4,55,66,77);
+    -> //
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> select * from marks;//
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
+|    4 |   55 |   66 |   77 |
++------+------+------+------+
+4 rows in set (0.00 sec)
+ 
+ 
+mysql> insert into marks values(5,55,866,77);//
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> select * from marks;//
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
+|    4 |   55 |   66 |   77 |
+|    5 |   55 |  866 |   77 |
++------+------+------+------+
+5 rows in set (0.00 sec)
+ 
+ 
+mysql> drop TRIGGER checkmark;//
+Query OK, 0 rows affected (0.01 sec)
+ 
+mysql> CREATE TRIGGER checkmark AFTER INSERT on marks FOR EACH ROW if new.m1>100 then update marks set m1=100 where marks.rno=new.rno; end if;//
+Query OK, 0 rows affected (0.08 sec)
+ 
+ 
+mysql> drop trigger checkmark;
+    -> //
+Query OK, 0 rows affected (0.01 sec)
+ 
+ 
+mysql> create trigger checkmark after insert on marks for each row  begin declare m11 int ; set m11=new.m1; if m11>100 then set m11=100; update marks set m1=m11; end if; end//
+Query OK, 0 rows affected (0.09 sec)
+ 
+ 
+mysql> select * from marks; //
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
+|    4 |   55 |   66 |   77 |
+|    5 |   55 |  866 |   77 |
++------+------+------+------+
+5 rows in set (0.00 sec)
+ 
+ 
+mysql> drop trigger checkmark
+    -> ;
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> create trigger checkmark before insert on marks for each row  begin declare m1 int ; set m1=new.m1; if m1>100 then  set m1=80; set new.m1=m1; end if; end //
+Query OK, 0 rows affected (0.08 sec)
+ 
+ 
+ 
+ 
+BEFORE INSERT
+mysql> create trigger checkSalary
+    -> before insert
+    -> on empinfo
+    -> for each row
+    -> begin
+    -> declare salary numeric(5);
+    -> set salary=NEW.salary;
+    -> if salary>=70000 then
+    -> set salary = salary - 1000;
+    -> end if;
+    -> set NEW.salary = salary;
+    -> end$$
+Query OK, 0 rows affected (0.14 sec)
+ 
+mysql> insert into empinfo values
+    -> (3, 'satyajit', 103,'Jr. Manager',78000);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> select * from empinfo;
++-------+----------+---------+-------------+--------+
+| empid | name     | dept_id | post        | salary |
++-------+----------+---------+-------------+--------+
+|     1 | mayur    |     101 | developer   |  19000 |
+|     2 | aditya   |     102 | tester      |  20000 |
+|     3 | satyajit |     103 | Jr. Manager |  77000 |
++-------+----------+---------+-------------+--------+
+3 rows in set (0.00 sec)
+ 
+mysql> select * from empaudit;
++-------+--------+
+| empid | CTC    |
++-------+--------+
+|     1 | 228000 |
+|     2 | 240000 |
+|     3 | 924000 |
++-------+--------+
+3 rows in set (0.00 sec)
+ 
+ 
+BEFORE UPDATE
+mysql> delimiter $$
+mysql> create trigger updateMarks
+    -> before update
+    -> on marksheet
+    -> for each row
+    -> begin
+    -> SET NEW.total=NEW.subject1+NEW.subject2+NEW.subject3;
+    -> SET NEW.average = NEW.total/3;
+    -> end$$
+Query OK, 0 rows affected (0.17 sec)
+ 
+mysql> update marksheet set subject1=27
+    -> where sid = 3;
+Query OK, 1 row affected (0.09 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+ 
+mysql> select * from marksheet;
++------+----------+----------+----------+-------+---------+
+| sid  | subject1 | subject2 | subject3 | total | average |
++------+----------+----------+----------+-------+---------+
+|    1 |       22 |       24 |       28 |    74 | 24.6667 |
+|    2 |       30 |       27 |       26 |    83 | 27.6667 |
+|    3 |       27 |       23 |       30 |    80 | 26.6667 |
++------+----------+----------+----------+-------+---------+
+3 rows in set (0.00 sec)
+ 
+ 
+BEFORE DELETE
+mysql> create trigger delRecord
+    -> before delete
+    -> on empinfo
+    -> for each row
+    -> begin
+    -> delete from empaudit
+    -> where empid=OLD.empid;
+    -> end$$
+Query OK, 0 rows affected (0.14 sec)
+ 
+mysql> delete from empinfo where empid=3;
+Query OK, 1 row affected (0.11 sec)
+ 
+mysql> select * from empinfo;
++-------+--------+---------+-----------+--------+
+| empid | name   | dept_id | post      | salary |
++-------+--------+---------+-----------+--------+
+|     1 | mayur  |     101 | developer |  19000 |
+|     2 | aditya |     102 | tester    |  20000 |
++-------+--------+---------+-----------+--------+
+2 rows in set (0.00 sec)
+ 
+mysql> select * from empaudit;
++-------+--------+
+| empid | CTC    |
++-------+--------+
+|     1 | 228000 |
+|     2 | 240000 |
++-------+--------+
+2 rows in set (0.00 sec)
+ 
+AFTER INSERT
+mysql> delimiter $$
+mysql> create trigger add_ctc
+    -> after insert
+    -> on empinfo
+    -> for each row
+    -> begin
+    -> insert into empaudit values
+    -> (NEW.empid, NEW.salary*12);
+    -> end$$
+Query OK, 0 rows affected (0.14 sec)
+ 
+mysql> select * from empinfo;
++-------+--------+---------+-----------+--------+
+| empid | name   | dept_id | post      | salary |
++-------+--------+---------+-----------+--------+
+|     1 | mayur  |     101 | developer |  19000 |
+|     2 | aditya |     102 | tester    |  18000 |
++-------+--------+---------+-----------+--------+
+2 rows in set (0.03 sec)
+ 
+mysql> select * from empaudit;
++-------+--------+
+| empid | CTC    |
++-------+--------+
+|     1 | 228000 |
+|     2 | 216000 |
++-------+--------+
+2 rows in set (0.00 sec)
+ 
+ 
+AFTER UPDATE
+mysql> delimiter $$
+mysql> create trigger update_CTC
+    -> after update
+    -> on empinfo
+    -> for each row
+    -> begin
+    -> update empaudit set ctc=NEW.salary*12
+    -> where empid=NEW.empid;
+    -> end$$
+Query OK, 0 rows affected (0.14 sec)
+ 
+mysql> update empinfo set salary=20000
+    -> where empid=2;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+ 
+mysql> select * from empinfo;
++-------+--------+---------+-----------+--------+
+| empid | name   | dept_id | post      | salary |
++-------+--------+---------+-----------+--------+
+|     1 | mayur  |     101 | developer |  19000 |
+|     2 | aditya |     102 | tester    |  20000 |
++-------+--------+---------+-----------+--------+
+2 rows in set (0.00 sec)
+ 
+mysql> select * from empaudit;
++-------+--------+
+| empid | CTC    |
++-------+--------+
+|     1 | 228000 |
+|     2 | 240000 |
++-------+--------+
+2 rows in set (0.00 sec)
+ 
+AFTER DELETE
+mysql> select * from student;
++-----+----------+------+----------+---------+------+
+| sid | name     | year | semester | dept_id | age  |
++-----+----------+------+----------+---------+------+
+|   1 | mayur    | TY   |        2 |     102 |   24 |
+|   2 | nikita   | SY   |        2 |     101 |   21 |
+|   3 | aditya   | TY   |        1 |     103 |   22 |
+|   4 | satyajit | FY   |        2 |     104 |   22 |
++-----+----------+------+----------+---------+------+
+4 rows in set (0.00 sec)
+ 
+mysql> select * from marksheet;
++------+----------+----------+----------+-------+---------+
+| sid  | subject1 | subject2 | subject3 | total | average |
++------+----------+----------+----------+-------+---------+
+|    2 |       30 |       27 |       26 |    83 | 27.6667 |
+|    3 |       27 |       23 |       30 |    80 | 26.6667 |
+|    4 |       23 |       23 |       23 |    69 |      23 |
+|    1 |       24 |       24 |       27 |    75 |      25 |
++------+----------+----------+----------+-------+---------+
+4 rows in set (0.00 sec)
+ 
+mysql> delimiter $$
+mysql> create trigger delStudent
+    -> after delete
+    -> on marksheet
+    -> for each row
+    -> begin
+    -> delete from student where sid=OLD.sid;
+    -> end$$
+Query OK, 0 rows affected (0.09 sec)
+ 
+ 
+mysql> delete from marksheet where sid=1;
+Query OK, 1 row affected (0.08 sec)
+ 
+mysql> select * from student;
++-----+----------+------+----------+---------+------+
+| sid | name     | year | semester | dept_id | age  |
++-----+----------+------+----------+---------+------+
+|   2 | nikita   | SY   |        2 |     101 |   21 |
+|   3 | aditya   | TY   |        1 |     103 |   22 |
+|   4 | satyajit | FY   |        2 |     104 |   22 |
++-----+----------+------+----------+---------+------+
+3 rows in set (0.00 sec)	
+ 
+mysql> select * from marksheet;
++------+----------+----------+----------+-------+---------+
+| sid  | subject1 | subject2 | subject3 | total | average |
++------+----------+----------+----------+-------+---------+
+|    2 |       30 |       27 |       26 |    83 | 27.6667 |
+|    3 |       27 |       23 |       30 |    80 | 26.6667 |
+|    4 |       23 |       23 |       23 |    69 |      23 |
++------+----------+----------+----------+-------+---------+
+3 rows in set (0.00 sec)
+ 
+ 
+ 
+ 

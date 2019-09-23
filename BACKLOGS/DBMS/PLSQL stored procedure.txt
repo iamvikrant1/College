@@ -1,0 +1,461 @@
+/*
+Write and execute PL/SQL stored procedure and function to perform a suitable task on the database.Demonstrate its use. 
+*/
+ 
+		
+		
+mysql> use university
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+ 
+ 
+				**Procedures**
+ 
+mysql> delimiter //
+mysql> create procedure a1(in var1 int)
+    -> begin
+    -> select * from inst limit var1; 
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> delimiter ;
+ 
+mysql> call a1(3);
++-----+------+--------+---------+
+| iid | name | sal    | dname   |
++-----+------+--------+---------+
+| 111 | dfg  | 125000 | comp    |
+| 112 | fgf  | 150000 | music   |
+| 113 | kjh  | 130000 | physics |
++-----+------+--------+---------+
+3 rows in set (0.00 sec)
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> delimiter //
+mysql> create procedure p1(in var1 int)
+    -> begin
+    -> select * from inst limit var1;
+    -> end; //
+Query OK, 0 rows affected (0.04 sec)
+ 
+mysql> call p1(1);//
++-----+------+--------+-------+
+| iid | name | sal    | dname |
++-----+------+--------+-------+
+| 111 | abc  | 700000 | comp  |
++-----+------+--------+-------+
+1 row in set (0.01 sec)
+ 
+Query OK, 0 rows affected (0.01 sec)
+ 
+mysql> call p1(3);//
++-----+------+--------+---------+
+| iid | name | sal    | dname   |
++-----+------+--------+---------+
+| 111 | abc  | 700000 | comp    |
+| 112 | pqr  |  90000 | music   |
+| 113 | efg  |  65000 | physics |
++-----+------+--------+---------+
+3 rows in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> delimiter //
+mysql> create procedure p2(out highsal int)
+    -> begin
+    -> select max(sal) into highsal from inst;
+    -> end ; //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> call p2(@highsal);//
+Query OK, 1 row affected (0.00 sec)
+ 
+mysql> select @highsal; //
++----------+
+| @highsal |
++----------+
+|   700000 |
++----------+
+1 row in set (0.00 sec)
+ 
+mysql> delimiter //
+mysql> create procedure p3(in deptno char,out total char)
+    -> begin
+    -> select count(iid) into total from inst where dname=deptno;
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> call p3("comp","@total");//
+mysql> call p3("1",@total);//
+Query OK, 1 row affected (0.02 sec)
+ 
+mysql> select @total;//
++--------+
+| @total |
++--------+
+| 0      |
++--------+
+1 row in set (0.00 sec)
+ 
+mysql> call p3("c",@total);//
+Query OK, 1 row affected (0.00 sec)
+ 
+mysql> select @total;//
++--------+
+| @total |
++--------+
+| 0      |
++--------+
+1 row in set (0.00 sec)
+ 
+mysql> create table marks(rno int,m1 int, m2 int, m3 int);
+    -> //
+Query OK, 0 rows affected (0.08 sec)
+ 
+mysql> insert into marks values(1,60,70,80),(2,70,80,90),(3,65,75,85);
+    -> //
+Query OK, 3 rows affected (0.04 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+ 
+mysql> select * from marks;
+    -> //
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
++------+------+------+------+
+3 rows in set (0.00 sec)
+ 
+ 
+ 
+mysql> delimiter //
+mysql> CREATE PROCEDURE grade(in roll int)
+    -> BEGIN
+    -> declare m11,m22,m33,avg int; declare avgc CURSOR FOR select m1,m2,m3 from marks where rno=roll;
+    -> OPEN avgc;
+    -> FETCH avgc into m11,m22,m33;
+    -> set avg=(m11+m22+m33)/3;
+    -> if(avg>75) then
+    -> select concat("DIST");
+    -> else
+    -> select concat("pass");
+    -> end if;
+    -> CLOSE avgc;
+    -> end; //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> call grade(2);
+    -> //
++----------------+
+| concat("DIST") |
++----------------+
+| DIST           |
++----------------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> select * from marks;
+    -> //
++------+------+------+------+
+| rno  | m1   | m2   | m3   |
++------+------+------+------+
+|    1 |   60 |   70 |   80 |
+|    2 |   70 |   80 |   90 |
+|    3 |   65 |   75 |   85 |
++------+------+------+------+
+3 rows in set (0.00 sec)
+ 
+mysql> call grade(1);
+    -> //
++----------------+
+| concat("pass") |
++----------------+
+| pass           |
++----------------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> call grade(3);//
++----------------+
+| concat("pass") |
++----------------+
+| pass           |
++----------------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+ 
+ 
+mysql> CREATE PROCEDURE fact(IN x INT)
+    -> BEGIN
+    -> 
+    ->   DECLARE result INT;
+    ->   DECLARE i INT;
+    ->   SET result = 1;
+    ->   SET i = 1;
+    -> 
+    ->   WHILE i <= x DO
+    ->     SET result = result * i;
+    ->     SET i = i + 1;
+    ->   END WHILE;
+    -> 
+    ->   SELECT x AS Number, result as Factorial;
+    -> 
+    -> END;
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> CALL fact(1) //
++--------+-----------+
+| Number | Factorial |
++--------+-----------+
+|      1 |         1 |
++--------+-----------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> CALL fact(2) //
++--------+-----------+
+| Number | Factorial |
++--------+-----------+
+|      2 |         2 |
++--------+-----------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> CALL fact(4) //
++--------+-----------+
+| Number | Factorial |
++--------+-----------+
+|      4 |        24 |
++--------+-----------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> CALL fact(0) //
++--------+-----------+
+| Number | Factorial |
++--------+-----------+
+|      0 |         1 |
++--------+-----------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> create table student(id int primary key,m1 int,m2 int,m3 int);
+Query OK, 0 rows affected (0.12 sec)
+ 
+mysql> select *from student; 
++-----+-----+-----+-----+
+| id    | m1  | m2  | m3  |
++-----+-----+-----+-----+
+|  1    |   49 |   56 |   78 |
+|  2    |   67 |   89 |   50 |
+|  3    |   57 |   80 |   72 |
+|  4    |   62 |  8 2 |   83 |
++-----+-----+-----+-----+
+4 rows in set (0.00 sec)
+ 
+ 
+mysql> delimiter //
+mysql> create procedure per()
+    -> begin
+    -> declare pid,pm1,pm2,pm3,pm int;
+    -> declare fetched int default 0;
+    -> declare student_cursor cursor for select *from student;
+    -> declare continue handler for not found set fetched=1;
+    -> start transaction;
+    -> savepoint all_or_none;
+    -> open student_cursor;
+    -> cursor_stud:loop
+    -> fetch student_cursor into pid,pm1,pm2,pm3;
+    -> if fetched=1 then
+    -> leave cursor_stud;
+    -> end if;
+    -> set pm=(pm1+pm2+pm3)/3;
+    -> if pm>=70 then
+    -> select concat('distinction',pm)as "grade";
+    -> end if;
+    -> if pm<70 && pm>60 then
+    -> select concat('first class',pm)as "grade";
+    -> end if;
+    -> if pm<40 then
+    -> select concat('fail',pm)as "grade";
+    ->end if;
+    -> end loop cursor_stud;
+    -> close student_cursor;
+    -> end //
+ 
+mysql> call per(); //
+ 
++---------------+
+| grade           |
++---------------+
+| first class61 |
++---------------+
+1 row in set (0.04 sec)
+ 
++---------------+
+| grade           |
++---------------+
+| first class69 |
++---------------+
+1 row in set (0.04 sec)
+ 
++----------------+
+| grade             |
++----------------+
+| distinction70 |
++----------------+
+1 row in set (0.04 sec)
+ 
++----------------+
+| grade             |
++----------------+
+| distinction76 |
++----------------+
+1 row in set (0.04 sec)
+ 
+mysql> create table student1(id int primary key,dbms int,cnt int,wet int);
+Query OK, 0 rows affected (0.01 sec)
+ 
+mysql> select * from student1;
+    -> //
++------+------+------+------+
+| id     | dbms| cnt  | wet   |
++------+------+------+------+
+|  1      |   34  |   24  |   23  |
+|  2      |   64  |   64  |   73  |
+|  3      |   54  |   64  |   63  |
+|  4      |   54  |   84  |   63  |
++------+------+------+------+
+4 rows in set (0.00 sec)
+ 
+mysql> create procedure per2()  
+-> begin  declare pid,pdbms,pcnt,pwet,pm int;  
+-> declare fetched int default 0;  
+-> declare student_cursor cursor for select * from student1;  
+-> declare continue handler for not found set fetched=1;  
+-> start transaction; 
+->  savepoint all_or_none; 
+->  open student_cursor;  cursor_stud:loop fetch student_cursor into pid,
+->  pdbms,pcnt,pwet;  if fetched=1 then leave cursor_stud;  
+-> end if; 
+->  set pm=( pdbms+pcnt+pwet)/3;
+->   if pm>=66  then select concat('distinction',pm)as "grade"; 
+->  end if; 
+->   if pm<66 && pm>60  then select concat('first class',pm) as "grade";  
+-> end if;  
+-> if pm<40 then select concat('fail',pm) as "grade"; 
+-> end if; 
+->  end loop; 
+->  close student_cursor; 
+  -> end;//
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> call per2();
+    -> //
++--------+
+| grade  |
++--------+
+| fail27  |
++--------+
+1 row in set (0.00 sec)
+ 
++-----------------+
+| grade              |
++-----------------+
+| distinction67  |
++-----------------+
+1 row in set (0.00 sec)
+ 
++-----------------+
+| grade              |
++-----------------+
+| distinction67  |
++-----------------+
+1 row in set (0.00 sec)
+ 
+ 
+ 
+ 
+ 
+			**Functions**
+ 
+mysql> DELIMITER //
+mysql> CREATE FUNCTION hello_world()
+    -> RETURNS TEXT
+    -> LANGUAGE SQL
+    -> BEGIN
+    -> RETURN 'Hello World';
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> DELIMITER ;
+mysql> SELECT hello_world();
++---------------+
+| hello_world() |
++---------------+
+| Hello World   |
++---------------+
+1 row in set (0.00 sec)
+ 
+mysql> DELIMITER //
+mysql> CREATE FUNCTION CalcIncome ( starting_value INT )
+    -> RETURNS INT
+    -> BEGIN
+    ->    DECLARE income INT;
+    ->    SET income = 0;
+    ->    label1: WHILE income <= 3000 DO
+    ->      SET income = income + starting_value;
+    ->    END WHILE label1;
+    ->    RETURN income;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> DELIMITER ;
+ 
+mysql> select CalcIncome(1000);
++------------------+
+| CalcIncome(1000) |
++------------------+
+|             4000 |
++------------------+
+1 row in set (0.00 sec)
+ 
+mysql> CREATE FUNCTION WEIGHTED_AVERAGE (n1 INT, n2 INT, n3 INT, n4 INT)
+    ->   RETURNS INT
+    ->    DETERMINISTIC
+    ->     BEGIN
+    ->      DECLARE avg INT;
+    ->      SET avg = (n1+n2+n3*2+n4*4)/8;
+    ->      RETURN avg;
+    ->     END //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> SELECT WEIGHTED_AVERAGE(70,65,65,60)
+    -> //
++-------------------------------+
+| WEIGHTED_AVERAGE(70,65,65,60) |
++-------------------------------+
+|                            63 |
++-------------------------------+
+1 row in set (0.00 sec)	
+		
+	
+ 
+ 
+ 
+ 
+ 
+ 

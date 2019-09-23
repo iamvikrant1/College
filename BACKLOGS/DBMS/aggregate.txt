@@ -1,0 +1,358 @@
+/*
+Execute the aggregate functions like count, sum, avg etc. on the suitable database. Make use of built in functions 
+according to the need of the database chosen. Retrieve the data from the database based on time and 
+date functions like now (), date (), day (), time () etc. Use group by and having clauses.
+*/
+ 
+ 
+mysql> use myuniversity
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+mysql> show tables;
++------------------------+
+| Tables_in_myuniversity |
++------------------------+
+| advisor                |
+| classroom              |
+| course                 |
+| department             |
+| instructor             |
+| section                |
+| student                |
+| takes                  |
+| teaches                |
+| timeslot               |
++------------------------+
+10 rows in set (0.00 sec)
+ 
+Q:Find the max salary of instructor
+ 
+mysql> select max(salary) from instructor;
++-------------+
+| max(salary) |
++-------------+
+|       90000 |
++-------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the max salary of instructor
+ 
+mysql> select min(salary) from instructor;
++-------------+
+| min(salary) |
++-------------+
+|       50000 |
++-------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the salary sum of all instructor
+ 
+mysql> select sum(salary) from instructor;
++-------------+
+| sum(salary) |
++-------------+
+|      490000 |
++-------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the average salary of all instructor
+ 
+mysql> select avg(salary) from instructor;
++-------------+
+| avg(salary) |
++-------------+
+|  70000.0000 |
++-------------+
+1 row in set (0.00 sec)
+ 
+Q:Find tha count of salary given to all instructors in all departmemt
+ 
+mysql> select count(salary) from instructor;
++---------------+
+| count(salary) |
++---------------+
+|             7 |
++---------------+
+1 row in set (0.00 sec)
+ 
+Q:Find count of instID of all instructors in all department
+ 
+mysql> select count(instID) from instructor group by deptname;
++---------------+
+| count(instID) |
++---------------+
+|             1 |
+|             1 |
+|             1 |
+|             2 |
+|             2 |
++---------------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the count of instructors who teaches to FY sem-I and display by courseid
+ 
+mysql> select count(instID) from teaches where semester="I" && year="FY" group by courseid;
++---------------+
+| count(instID) |
++---------------+
+|             1 |
+|             1 |
++---------------+
+2 rows in set (0.00 sec)
+ 
+Q:Find the count of instructors who teaches to FY sem-I and display by sectionid
+ 
+mysql> select count(instID) from teaches where semester="I" && year="FY" group by secid;
++---------------+
+| count(instID) |
++---------------+
+|             2 |
++---------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the count of instructor in each department
+ 
+mysql> select deptname,count(instID) from instructor group by deptname;
++----------+---------------+
+| deptname | count(instID) |
++----------+---------------+
+| biology  |             1 |
+| computer |             1 |
+| history  |             1 |
+| music    |             2 |
+| physics  |             2 |
++----------+---------------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the no of instructor who teaches FY sem-I of each department
+ 
+mysql> select deptname,count(instructor.instID) from instructor,teaches where instructor.instID=teaches.instID && semester="I" && year="FY" group by deptname;
++----------+--------------------------+
+| deptname | count(instructor.instID) |
++----------+--------------------------+
+| biology  |                        2 |
++----------+--------------------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the average salary of computer department
+ 
+mysql> select deptname,avg(salary) from instructor order by deptname;
++----------+-------------+
+| deptname | avg(salary) |
++----------+-------------+
+| computer | 100000.0000 |
++----------+-------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the number of instructors who teaches FY sem-I
+ 
+mysql> select count(instructor.instID) from instructor,teaches where instructor.instID=teaches.instID && semester="I" && year="FY" group by deptname;
++--------------------------+
+| count(instructor.instID) |
++--------------------------+
+|                        2 |
++--------------------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the average salary of each department
+ 
+mysql> select deptname,avg(salary) from instructor group by deptname;
++----------+-------------+
+| deptname | avg(salary) |
++----------+-------------+
+| biology  |  85000.0000 |
+| computer |  95000.0000 |
+| history  |  80000.0000 |
+| music    | 120000.0000 |
+| physics  | 100000.0000 |
++----------+-------------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the number of students who are taken course and section by instuctor "117"
+ 
+mysql> select count(sid) from takes where courseid in (select courseid from teaches where instID=117);
++------------+
+| count(sid) |
++------------+
+|          2 |
++------------+
+1 row in set (0.00 sec)
+ 
+Q:Find number of instructors who heave taught course and section to student "51"
+ 
+mysql> select count(instID) from teaches where courseid in (select courseid from takes where sid=51);
++---------------+
+| count(instID) |
++---------------+
+|             1 |
++---------------+
+1 row in set (0.00 sec)
+ 
+Q:Perform Join operation on teaches and instructor
+ 
+mysql> select * from teaches join instructor;
++--------+----------+-------+----------+------+--------+------+--------+----------+
+| instID | courseid | secid | semester | year | instID | name | salary | deptname |
++--------+----------+-------+----------+------+--------+------+--------+----------+
+|    117 | bio_1    | s11   | I        | FY   |    111 | ABC  |  95000 | computer |
+|    117 | bio_2    | s11   | I        | FY   |    111 | ABC  |  95000 | computer |
+|    111 | cs_2     | s13   | II       | SY   |    111 | ABC  |  95000 | computer |
+|    115 | MV_1     | s14   | II       | TY   |    111 | ABC  |  95000 | computer |
+|    113 | phy_2    | s12   | II       | FY   |    111 | ABC  |  95000 | computer |
+|    117 | bio_1    | s11   | I        | FY   |    112 | PQR  | 120000 | music    |
+|    117 | bio_2    | s11   | I        | FY   |    112 | PQR  | 120000 | music    |
+|    111 | cs_2     | s13   | II       | SY   |    112 | PQR  | 120000 | music    |
+|    115 | MV_1     | s14   | II       | TY   |    112 | PQR  | 120000 | music    |
+|    113 | phy_2    | s12   | II       | FY   |    112 | PQR  | 120000 | music    |
+|    117 | bio_1    | s11   | I        | FY   |    113 | EFG  | 100000 | physics  |
+|    117 | bio_2    | s11   | I        | FY   |    113 | EFG  | 100000 | physics  |
+|    111 | cs_2     | s13   | II       | SY   |    113 | EFG  | 100000 | physics  |
+|    115 | MV_1     | s14   | II       | TY   |    113 | EFG  | 100000 | physics  |
+|    113 | phy_2    | s12   | II       | FY   |    113 | EFG  | 100000 | physics  |
+|    117 | bio_1    | s11   | I        | FY   |    114 | XYZ  |  80000 | history  |
+|    117 | bio_2    | s11   | I        | FY   |    114 | XYZ  |  80000 | history  |
+|    111 | cs_2     | s13   | II       | SY   |    114 | XYZ  |  80000 | history  |
+|    115 | MV_1     | s14   | II       | TY   |    114 | XYZ  |  80000 | history  |
+|    113 | phy_2    | s12   | II       | FY   |    114 | XYZ  |  80000 | history  |
+|    117 | bio_1    | s11   | I        | FY   |    115 | LMN  | 120000 | music    |
+|    117 | bio_2    | s11   | I        | FY   |    115 | LMN  | 120000 | music    |
+|    111 | cs_2     | s13   | II       | SY   |    115 | LMN  | 120000 | music    |
+|    115 | MV_1     | s14   | II       | TY   |    115 | LMN  | 120000 | music    |
+|    113 | phy_2    | s12   | II       | FY   |    115 | LMN  | 120000 | music    |
+|    117 | bio_1    | s11   | I        | FY   |    116 | UVW  | 100000 | physics  |
+|    117 | bio_2    | s11   | I        | FY   |    116 | UVW  | 100000 | physics  |
+|    111 | cs_2     | s13   | II       | SY   |    116 | UVW  | 100000 | physics  |
+|    115 | MV_1     | s14   | II       | TY   |    116 | UVW  | 100000 | physics  |
+|    113 | phy_2    | s12   | II       | FY   |    116 | UVW  | 100000 | physics  |
+|    117 | bio_1    | s11   | I        | FY   |    117 | STU  |  85000 | biology  |
+|    117 | bio_2    | s11   | I        | FY   |    117 | STU  |  85000 | biology  |
+|    111 | cs_2     | s13   | II       | SY   |    117 | STU  |  85000 | biology  |
+|    115 | MV_1     | s14   | II       | TY   |    117 | STU  |  85000 | biology  |
+|    113 | phy_2    | s12   | II       | FY   |    117 | STU  |  85000 | biology  |
++--------+----------+-------+----------+------+--------+------+--------+----------+
+35 rows in set (0.00 sec)
+ 
+Q:Perform Natural-Join operation on teaches and instructor
+ 
+mysql> select * from teaches natural join instructor;
++--------+----------+-------+----------+------+------+--------+----------+
+| instID | courseid | secid | semester | year | name | salary | deptname |
++--------+----------+-------+----------+------+------+--------+----------+
+|    117 | bio_1    | s11   | I        | FY   | STU  |  85000 | biology  |
+|    117 | bio_2    | s11   | I        | FY   | STU  |  85000 | biology  |
+|    111 | cs_2     | s13   | II       | SY   | ABC  |  95000 | computer |
+|    115 | MV_1     | s14   | II       | TY   | LMN  | 120000 | music    |
+|    113 | phy_2    | s12   | II       | FY   | EFG  | 100000 | physics  |
++--------+----------+-------+----------+------+------+--------+----------+
+5 rows in set (0.00 sec)
+ 
+mysql> desc timeslot;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| tid       | int(11)     | NO   | PRI | NULL    |       |
+| day       | varchar(20) | YES  |     | NULL    |       |
+| starttime | varchar(20) | YES  |     | NULL    |       |
+| endtime   | varchar(20) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+ 
+mysql> select * from timeslot;
++-----+----------+-----------+---------+
+| tid | day      | starttime | endtime |
++-----+----------+-----------+---------+
+|   1 | monday   | 9am       | 2pm     |
+|   2 | monday   | 10am      | 3pm     |
+|   3 | tuesday  | 9am       | 2pm     |
+|   4 | thursday | 8am       | 10am    |
+|   5 | friday   | 7am       | 9am     |
++-----+----------+-----------+---------+
+5 rows in set (0.00 sec)
+ 
+mysql> alter table timeslot add reqDT datetime;
+Query OK, 5 rows affected (0.24 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+ 
+mysql> desc timeslot;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| tid       | int(11)     | NO   | PRI | NULL    |       |
+| day       | varchar(20) | YES  |     | NULL    |       |
+| starttime | varchar(20) | YES  |     | NULL    |       |
+| endtime   | varchar(20) | YES  |     | NULL    |       |
+| reqDT     | datetime    | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+ 
+Q:update reqDT of timeslot where tid=1 and tid=2
+ 
+mysql> update timeslot set reqDT=NOW() where tid=1 || tid=2;
+Query OK, 2 rows affected (0.03 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+ 
+Q:update reqDT of timeslot where tid=3 and tid=4 and tid=5
+ 
+mysql> update timeslot set reqDT=NOW() where tid=3 || tid=4 || tid=5;
+Query OK, 3 rows affected (0.03 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+ 
+mysql> select * from timeslot;
++-----+----------+-----------+---------+---------------------+
+| tid | day      | starttime | endtime | reqDT               |
++-----+----------+-----------+---------+---------------------+
+|   1 | monday   | 9am       | 2pm     | 2018-07-19 12:52:03 |
+|   2 | monday   | 10am      | 3pm     | 2018-07-19 12:52:03 |
+|   3 | tuesday  | 9am       | 2pm     | 2018-07-19 12:52:22 |
+|   4 | thursday | 8am       | 10am    | 2018-07-19 12:52:22 |
+|   5 | friday   | 7am       | 9am     | 2018-07-19 12:52:22 |
++-----+----------+-----------+---------+---------------------+
+5 rows in set (0.00 sec)
+ 
+Q:Implement the date and time functions
+ 
+mysql> SELECT DATE('2018-07-26 09:10:24');
++-----------------------------+
+| DATE('2018-07-26 09:10:24') |
++-----------------------------+
+| 2018-07-26                  |
++-----------------------------+
+1 row in set (0.00 sec)
+ 
+Q:Display current date-time
+ 
+mysql> SELECT NOW();
++---------------------+
+| NOW()               |
++---------------------+
+| 2018-07-26 09:16:53 |
++---------------------+
+1 row in set (0.00 sec)
+ 
+Q:select day from('2018-07-26 09:10:24')
+ 
+mysql> SELECT DAY('2018-07-26 09:10:24');
++----------------------------+
+| DAY('2018-07-26 09:10:24') |
++----------------------------+
+|                         26 |
++----------------------------+
+1 row in set (0.00 sec)
+ 
+Q:select time from ('2018-07-26 09:10:24')
+ 
+mysql> SELECT TIME('2018-07-26 09:10:24');
++-----------------------------+
+| TIME('2018-07-26 09:10:24') |
++-----------------------------+
+| 09:10:24                    |
++-----------------------------+
+1 row in set (0.00 sec)
+ 
+ 
+ 
+ 
+ 
+ 

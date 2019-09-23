@@ -1,0 +1,311 @@
+/*
+Design any database with at least 3 entities and relationships between them. Apply DCL and DDL commands. Draw suitable ER/EER diagram for the system.
+*/
+ 
+ 
+mysql> create database myuniversity;
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> use myuniversity;
+Database changed
+ 
+mysql> create table department(deptname varchar(20) primary key,building int,budget int);
+Query OK, 0 rows affected (0.29 sec)
+ 
+mysql> desc department;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| deptname | varchar(20) | NO   | PRI | NULL    |       |
+| building | int(11)     | YES  |     | NULL    |       |
+| budget   | int(11)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.03 sec)
+ 
+mysql> create table instructor(instID int primary key,name varchar(20),salary int,deptname varchar(20),foreign key(deptname) references department(deptname));
+Query OK, 0 rows affected (0.39 sec)
+ 
+mysql> desc instructor;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| instID   | int(11)     | NO   | PRI | NULL    |       |
+| name     | varchar(20) | YES  |     | NULL    |       |
+| salary   | int(11)     | YES  |     | NULL    |       |
+| deptname | varchar(20) | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.02 sec)
+ 
+mysql> create table student(sid int primary key,name varchar(20),tot_cred int,deptname varchar(20),foreign key(deptname) references department(deptname));
+Query OK, 0 rows affected (0.29 sec)
+ 
+mysql> desc student;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| sid      | int(11)     | NO   | PRI | NULL    |       |
+| name     | varchar(20) | YES  |     | NULL    |       |
+| tot_cred | int(11)     | YES  |     | NULL    |       |
+| deptname | varchar(20) | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+ 
+mysql> create table course(courseid varchar(20) primary key,title varchar(20),credits int,deptname varchar(20),foreign key(deptname) references department(deptname));
+Query OK, 0 rows affected (0.31 sec)
+ 
+mysql> desc course;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| courseid | varchar(20) | NO   | PRI | NULL    |       |
+| title    | varchar(20) | YES  |     | NULL    |       |
+| credits  | int(11)     | YES  |     | NULL    |       |
+| deptname | varchar(20) | YES  | MUL | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.02 sec)
+ 
+mysql> create table classroom(building int,roomno int,capacity int,primary key(building,roomno)); 
+Query OK, 0 rows affected (0.31 sec)
+ 
+mysql> mysql> desc classroom;
++----------+---------+------+-----+---------+-------+
+| Field    | Type    | Null | Key | Default | Extra |
++----------+---------+------+-----+---------+-------+
+| building | int(11) | NO   | PRI | NULL    |       |
+| roomno   | int(11) | NO   | PRI | NULL    |       |
+| capacity | int(11) | YES  |     | NULL    |       |
++----------+---------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+ 
+mysql> create table timeslot(tid int primary key,day varchar(20),starttime varchar(20),endtime varchar(20));
+Query OK, 0 rows affected (0.30 sec)
+ 
+mysql> desc timeslot;
++-----------+-------------+------+-----+---------+-------+
+| Field     | Type        | Null | Key | Default | Extra |
++-----------+-------------+------+-----+---------+-------+
+| tid       | int(11)     | NO   | PRI | NULL    |       |
+| day       | varchar(20) | YES  |     | NULL    |       |
+| starttime | varchar(20) | YES  |     | NULL    |       |
+| endtime   | varchar(20) | YES  |     | NULL    |       |
++-----------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+ 
+mysql> create table section(courseid varchar(20),secid varchar(20),semester varchar(10),
+year varchar(10),tid int,building int,roomno int,foreign key(courseid) references course(courseid),
+foreign key(tid) references timeslot(tid),foreign key(building,roomno) references classroom(building,
+roomno),primary key(courseid,secid,semester,year));
+Query OK, 0 rows affected (0.52 sec)
+ 
+mysql> desc section;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| courseid | varchar(20) | NO   | PRI | NULL    |       |
+| secid    | varchar(20) | NO   | PRI | NULL    |       |
+| semester | varchar(10) | NO   | PRI | NULL    |       |
+| year     | varchar(10) | NO   | PRI | NULL    |       |
+| tid      | int(11)     | YES  | MUL | NULL    |       |
+| building | int(11)     | YES  | MUL | NULL    |       |
+| roomno   | int(11)     | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+7 rows in set (0.02 sec)
+ 
+mysql> create table teaches(instID int,courseid varchar(20),secid varchar(20),
+semester varchar(10),year varchar(10),foreign key(instId) references instructor(instID),
+foreign key(courseid,secid,semester,year) references section(instID,courseid,secid,semester,year));
+ERROR 1239 (42000): Incorrect foreign key definition for 'foreign key without name': Key reference and table reference dont match
+mysql> create table teaches(instID int,courseid varchar(20),secid varchar(20),
+semester varchar(10),year varchar(10),foreign key(instId) references instructor(instID),
+foreign key(courseid,secid,semester,year) references section(courseid,secid,semester,year),
+primary key(instID,courseid,secid,semester,year));
+Query OK, 0 rows affected (0.32 sec)
+ 
+mysql> desc teaches;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| instID   | int(11)     | NO   | PRI | NULL    |       |
+| courseid | varchar(20) | NO   | PRI | NULL    |       |
+| secid    | varchar(20) | NO   | PRI | NULL    |       |
+| semester | varchar(10) | NO   | PRI | NULL    |       |
+| year     | varchar(10) | NO   | PRI | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+ 
+mysql> create table takes(sid int,courseid varchar(20),secid varchar(20),semester varchar(10),
+year varchar(10),grades varchar(10),foreign key(sid) references student(sid),foreign key(courseid,
+secid,semester,year) references section(courseid,secid,semester,year),primary key(sid,courseid,secid,semester,year));
+Query OK, 0 rows affected (0.30 sec)
+ 
+mysql> desc takes;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| sid      | int(11)     | NO   | PRI | NULL    |       |
+| courseid | varchar(20) | NO   | PRI | NULL    |       |
+| secid    | varchar(20) | NO   | PRI | NULL    |       |
+| semester | varchar(10) | NO   | PRI | NULL    |       |
+| year     | varchar(10) | NO   | PRI | NULL    |       |
+| grades   | varchar(10) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+ 
+mysql> create table advisor(sid int,instID int,foreign key(sid) references student(sid),foreign key(instID) references instructor(instID));
+Query OK, 0 rows affected (0.36 sec)
+ 
+mysql> desc advisor;
++--------+---------+------+-----+---------+-------+
+| Field  | Type    | Null | Key | Default | Extra |
++--------+---------+------+-----+---------+-------+
+| sid    | int(11) | YES  | MUL | NULL    |       |
+| instID | int(11) | YES  | MUL | NULL    |       |
++--------+---------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+ 
+mysql> create index idepartment on department(deptname);
+Query OK, 0 rows affected (0.34 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index iinstructor on instructor(instID);
+Query OK, 0 rows affected (0.20 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index istudent on student(sid);
+Query OK, 0 rows affected (0.21 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index icourse on course(courseid);
+Query OK, 0 rows affected (0.25 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index itimeslot on timeslot(tid);
+Query OK, 0 rows affected (0.24 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index iclassroom on classroom(buildind,roomno);
+ERROR 1072 (42000): Key column 'buildind' doesn't exist in table
+mysql> create index iclassroom on classroom(building,roomno);
+Query OK, 0 rows affected (0.23 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index isection on section(courseid,secid,semester,year);
+Query OK, 0 rows affected (0.22 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index iteaches on teaches(instID,courseid,secid,semester,year);
+Query OK, 0 rows affected (0.24 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index itakes on takes(sid,courseid,secid,semester,year);
+Query OK, 0 rows affected (0.21 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> create index iadvisor on advisor(sid,instID);
+Query OK, 0 rows affected (0.25 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> show tables;
++------------------------+
+| Tables_in_myuniversity |
++------------------------+
+| advisor                |
+| classroom              |
+| course                 |
+| department             |
+| instructor             |
+| section                |
+| student                |
+| takes                  |
+| teaches                |
+| timeslot               |
++------------------------+
+10 rows in set (0.00 sec)
+ 
+mysql> select user from mysql.user;
++------------------+
+| user             |
++------------------+
+| sahil            |
+| root             |
+| root             |
+| root             |
+| debian-sys-maint |
+| root             |
++------------------+
+6 rows in set (0.00 sec)
+ 
+mysql> create user clerk identified by "newclerk";
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> grant all privileges on myuniversity.student to clerk;
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> exit;
+Bye
+ 
+ 
+ 
+ 
+ 
+administrator@IT-SL2-PC45:~$ sudo mysql -u clerk -p
+Enter password: 
+ERROR 1045 (28000): Access denied for user 'clerk'@'localhost' (using password: YES)
+administrator@IT-SL2-PC45:~$ sudo mysql -u clerk -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 51
+Server version: 5.5.60-0ubuntu0.14.04.1 (Ubuntu)
+ 
+Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+ 
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+ 
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+ 
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| myuniversity       |
++--------------------+
+2 rows in set (0.00 sec)
+ 
+mysql> use myuniversity;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+mysql> show tables;
++------------------------+
+| Tables_in_myuniversity |
++------------------------+
+| student                |
++------------------------+
+1 row in set (0.00 sec)
+ 
+Q:Find the information of all students
+ 
+mysql> select * from student;
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
++-----+---------+----------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> exit;
+Bye
+administrator@IT-SL2-PC45:~$ 
+ 
+ 
+ 

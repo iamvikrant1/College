@@ -1,0 +1,74 @@
+/* 
+Write a PL/SQL block to implement all types of cursor.
+*/
+	
+	
+			**Cursor**
+	
+		
+mysql> delimiter //
+mysql> create procedure test()
+    -> begin
+    -> declare i int, n text;
+    -> declare cur1 cursor for select stud_name,total_credit from student;
+    -> open cur1;
+    -> fetch cur1 into n,i;
+    -> select n,i;
+    -> close cur1;
+    -> end; //
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> call test();
+ 
++---------+------+
+| n       | i    |
++---------+------+
+| Abhijit |    8 |
++---------+------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)
+ 
+mysql> create procedure cursor2(in cid varchar(10))
+    -> begin
+    -> declare rno int;
+    -> declare cur2 cursor for select room_no from section where course_id=cid;
+    -> open cur2;
+    -> fetch cur2 into rno;
+    -> select rno;
+    -> close cur2;
+    -> end; //
+Query OK, 0 rows affected (0.00 sec)
+ 
+ 
+ 
+ 
+ 
+ 
+mysql> call cursor2('Bio1');
++------+
+| rno  |
++------+
+|   52 |
++------+
+1 row in set (0.02 sec)
+ 
+Query OK, 0 rows affected (0.02 sec)
+ 
+mysql> call cursor2('CS2');
++------+
+| rno  |
++------+
+|   11 |
++------+
+1 row in set (0.00 sec)
+ 
+Query OK, 0 rows affected (0.00 sec)		
+		
+	
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,395 @@
+/*
+Execute at least 10 queries on any suitable MongoDB database that demonstrates following:
+1:$ where queries
+2:Cursors (Limits, skips, sorts, advanced query options)
+3:Database commands
+*/
+ 
+ 
+> show dbs;
+admin                (empty)
+local                0.078GB
+my_order_collection  0.078GB
+myuniversity         0.078GB
+university           0.078GB
+ 
+> use myuniversity;
+switched to db myuniversity
+ 
+> show collections;
+student
+system.indexes
+teacher
+user
+food
+ 
+ 
+Q:Find student details where student is from COMP department and 78 marks
+> db.student.find({$where:function(){return this.deptname=="COMP"&&this.marks==78}}).pretty();
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+ 
+ 
+Q:Find the student information of students with ascending order of their names
+> db.student.find().sort({name:1});
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b87757f88dc13034ef93ea7"), "sid" : 53, "name" : "sanket", "phno" : [ 8557, 9221 ], "marks" : 68, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b87759088dc13034ef93ea8"), "sid" : 51, "name" : "sanket", "phno" : 8521, "marks" : 68, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : "shantanu", "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877a4388dc13034ef93eab"), "sid" : 56, "name" : "siddhesh", "phno" : [ 9055, 8870, 8052 ], "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b87754a88dc13034ef93ea6"), "sid" : 51, "name" : { "fname" : "shubham", "lname" : "shinde" }, "phno" : [ 8087, 9021 ], "marks" : 78, "deptname" : "COMP" }
+ 
+ 
+Q:Find the student information of students with ascending order of their fnames then names
+> db.student.find().sort({"name.fname":1},{name:1});
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : { "fname" : "gaurav", "lname" : "rokade" }, "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+{ "_id" : ObjectId("5b8789223d2b815e7a0abbdb"), "sid" : 59, "name" : { "fname" : "kedar", "lname" : "shinde" }, "marks" : 77, "deptname" : "ENTC", "phno" : "5437" }
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : { "fname" : "om", "lname" : "thakur" }, "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : { "fname" : "shantanu", "lname" : "garud" }, "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b87754a88dc13034ef93ea6"), "sid" : 51, "name" : { "fname" : "shubham", "lname" : "shinde" }, "phno" : [ 8087, 9021 ], "marks" : 78, "deptname" : "COMP" }
+{ "_id" : ObjectId("5b877a4388dc13034ef93eab"), "sid" : 56, "name" : { "fname" : "siddhesh", "lname" : "konda" }, "phno" :
+ [ 9055, 8870, 8052 ], "marks" : 70, "deptname" : "MUSIC" }
+ 
+ 
+Q:Retrieve 3rd and 4th user deatils using cursor
+> var newdata= db.user.find().limit(2).skip(2).pretty();
+> while(newdata.hasNext()) {print(tojson(newdata.next()));}
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+{ "_id" : ObjectId("5b90c12147866b07bb59af28"), "id" : 4, "Y" : 4 }
+ 
+ 
+Q:Find details of student whose marks are grater than 70 with cursor
+> var data= db.student.find({marks:{$gt:70}});
+> while(data.hasNext()) {print(tojson(data.next()));}
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+{
+	"_id" : ObjectId("5b877cc488dc13034ef93eac"),
+	"sid" : 57,
+	"name" : {
+		"fname" : "gaurav",
+		"lname" : "rokade"
+	},
+	"phno" : 7055,
+	"marks" : 80,
+	"deptname" : "IT"
+}
+{
+	"_id" : ObjectId("5b8789223d2b815e7a0abbdb"),
+	"sid" : 59,
+	"name" : {
+		"fname" : "kedar",
+		"lname" : "shinde"
+	},
+	"marks" : 77,
+	"deptname" : "ENTC",
+	"phno" : "5437"
+}
+ 
+ 
+Q:Retrieve first-names of student with help of cursor
+> var cursor= db.student.find();
+> cursor.forEach(function(x){print(x.name.fname);})
+shubham
+siddhesh
+om
+shantanu
+gaurav
+kedar
+ 
+ 
+Q:Find the information of all students and skip first 2
+> db.student.find().skip(2).pretty();
+{
+	"_id" : ObjectId("5b87759088dc13034ef93ea8"),
+	"sid" : 51,
+	"name" : "sanket",
+	"phno" : 8521,
+	"marks" : 68,
+	"deptname" : "BIO"
+}
+{
+	"_id" : ObjectId("5b8779e588dc13034ef93ea9"),
+	"sid" : 54,
+	"name" : "omkar",
+	"phno" : 9921,
+	"marks" : 65,
+	"deptname" : "IT"
+}
+{
+	"_id" : ObjectId("5b877a1988dc13034ef93eaa"),
+	"sid" : 55,
+	"name" : "shantanu",
+	"phno" : 8855,
+	"marks" : 70,
+	"deptname" : "MUSIC"
+}
+{
+	"_id" : ObjectId("5b877a4388dc13034ef93eab"),
+	"sid" : 56,
+	"name" : "siddhesh",
+	"phno" : [
+		9055,
+		8870,
+		8052
+	],
+	"marks" : 70,
+	"deptname" : "MUSIC"
+}
+{
+	"_id" : ObjectId("5b877cc488dc13034ef93eac"),
+	"sid" : 57,
+	"name" : "gaurav",
+	"phno" : 7055,
+	"marks" : 80,
+	"deptname" : "IT"
+}
+{
+	"_id" : ObjectId("5b8789223d2b815e7a0abbdb"),
+	"sid" : 59,
+	"name" : "kedar",
+	"marks" : 77
+ 
+ 
+Q:Find details of first 3 students
+> db.student.find().limit(3).pretty();
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+{
+	"_id" : ObjectId("5b877a4388dc13034ef93eab"),
+	"sid" : 56,
+	"name" : {
+		"fname" : "siddhesh",
+		"lname" : "konda"
+	},
+	"phno" : [
+		9055,
+		8870,
+		8052
+	],
+	"marks" : 70,
+	"deptname" : "MUSIC"
+}
+{
+	"_id" : ObjectId("5b8779e588dc13034ef93ea9"),
+	"sid" : 54,
+	"name" : {
+		"fname" : "om",
+		"lname" : "thakur"
+	},
+	"phno" : 9921,
+	"marks" : 65,
+	"deptname" : "IT"
+}
+ 
+ 
+Q:Find information of teachers in sorted form by name
+> db.teacher.find().pretty().sort({name:1});
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 50000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea2"),
+	"tid" : 103,
+	"name" : "Mahesh",
+	"deptname" : "COMP",
+	"salary" : 55000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87690f88dc13034ef93ea0"),
+	"tid" : 101,
+	"name" : "Ravi",
+	"deptname" : "IT",
+	"salary" : 50000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87692288dc13034ef93ea1"),
+	"tid" : 102,
+	"name" : "Sameer",
+	"deptname" : "COMP",
+	"salary" : 60000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea5"),
+	"tid" : 106,
+	"name" : "Vaibhav",
+	"deptname" : "MECH",
+	"salary" : 50000,
+	"status" : "A"
+}
+ 
+ 
+Q:Find details of all teachers whose status is "NA" in sorted form by tid
+> db.teacher.find( {status:"NA"} ).pretty().sort({tid:1});
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 50000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+ 
+Q:Find details of first 5 teachers 
+> db.teacher.find().pretty().limit(5);
+{
+	"_id" : ObjectId("5b87690f88dc13034ef93ea0"),
+	"tid" : 101,
+	"name" : "Ravi",
+	"deptname" : "IT",
+	"salary" : 50000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87692288dc13034ef93ea1"),
+	"tid" : 102,
+	"name" : "Sameer",
+	"deptname" : "COMP",
+	"salary" : 60000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea2"),
+	"tid" : 103,
+	"name" : "Mahesh",
+	"deptname" : "COMP",
+	"salary" : 55000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 50000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+ 
+ 
+Q:Find details of all teachers except first-2
+> db.teacher.find().pretty().skip(2);
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea2"),
+	"tid" : 103,
+	"name" : "Mahesh",
+	"deptname" : "COMP",
+	"salary" : 55000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 50000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea5"),
+	"tid" : 106,
+	"name" : "Vaibhav",
+	"deptname" : "MECH",
+	"salary" : 50000,
+	"status" : "A"
+}
+ 
+ 
+Q:Find user details where field-Y has value grater than 3 and order by id ascending using $query
+> db.user.find({"$query":{Y:{$gt:3}},"$orderby":{id:1}});
+{ "_id" : ObjectId("5b90c12147866b07bb59af28"), "id" : 4, "Y" : 4 }
+{ "_id" : ObjectId("5b90c15847866b07bb59af29"), "id" : 5, "Y" : 5 }
+ 
+ 
+Q:Find user details where field-Y has value grater than 3 and order by id descending using $query
+> db.user.find({"$query":{Y:{$gt:3}},"$orderby":{id:-1}});
+{ "_id" : ObjectId("5b90c15847866b07bb59af29"), "id" : 5, "Y" : 5 }
+{ "_id" : ObjectId("5b90c12147866b07bb59af28"), "id" : 4, "Y" : 4 }
+ 
+ 
+Q:Find user details where name="ABC" and order by id ascending using $query
+> db.user.find({"$query":{name:"ABC"},"$orderby":{id:-1}}).pretty();
+{
+	"_id" : ObjectId("5b90c1dd47866b07bb59af2a"),
+	"id" : 6,
+	"name" : "ABC",
+	"address" : "PUNE"
+}
+ 
+ 

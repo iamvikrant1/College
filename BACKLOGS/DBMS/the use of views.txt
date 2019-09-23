@@ -1,0 +1,105 @@
+/*
+Execute DDL statements which demonstrate the use of views. Try to update the base table using its corresponding view. 		
+Also consider restrictions on updatable views and perform view creation from multiple tables.
+*/
+	
+mysql> use myuniversity
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+mysql> show tables;
++------------------------+
+| Tables_in_myuniversity |
++------------------------+
+| advisor                |
+| classroom              |
+| course                 |
+| department             |
+| instructor             |
+| section                |
+| student                |
+| takes                  |
+| teaches                |
+| timeslot               |
++------------------------+
+10 rows in set (0.00 sec)
+ 
+Q:Create view inst1 where user can see only instID and courseid from teaches
+ 
+mysql> create view inst1 as select instID,courseid from teaches;
+Query OK, 0 rows affected (0.03 sec)
+ 
+Q:Find all details from view-view1
+ 
+mysql> select * from inst1;
++--------+----------+
+| instID | courseid |
++--------+----------+
+|    117 | bio_1    |
+|    117 | bio_2    |
+|    111 | cs_2     |
+|    115 | MV_1     |
+|    113 | phy_2    |
++--------+----------+
+5 rows in set (0.00 sec)
+ 
+Q:Create view with instID name and deptname from teaches
+ 
+mysql> create view inst1 as select instID,courseid from teaches;
+Query OK, 0 rows affected (0.03 sec)
+ 
+Q:Find all details from view inst_clerk
+ 
+mysql> select * from inst_clerk;
++--------+------+----------+
+| instID | name | deptname |
++--------+------+----------+
+|    111 | ABC  | computer |
+|    112 | PQR  | music    |
+|    113 | EFG  | physics  |
+|    114 | XYZ  | history  |
+|    115 | LMN  | music    |
+|    116 | UVW  | physics  |
+|    117 | STU  | biology  |
++--------+------+----------+
+7 rows in set (0.00 sec)
+ 
+Q:update instructor name to "newABC" of instructor "111"
+ 
+mysql> update inst_clerk set name="NewABC" where instID=111;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+ 
+Q:Find all details from view inst_clerk
+ 
+mysql> select * from inst_clerk;
++--------+--------+----------+
+| instID | name   | deptname |
++--------+--------+----------+
+|    111 | NewABC | computer |
+|    112 | PQR    | music    |
+|    113 | EFG    | physics  |
+|    114 | XYZ    | history  |
+|    115 | LMN    | music    |
+|    116 | UVW    | physics  |
+|    117 | STU    | biology  |
++--------+--------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> select * from instructor;
++--------+--------+--------+----------+
+| instID | name   | salary | deptname |
++--------+--------+--------+----------+
+|    111 | NewABC |  95000 | computer |
+|    112 | PQR    | 120000 | music    |
+|    113 | EFG    | 100000 | physics  |
+|    114 | XYZ    |  80000 | history  |
+|    115 | LMN    | 120000 | music    |
+|    116 | UVW    | 100000 | physics  |
+|    117 | STU    |  85000 | biology  |
++--------+--------+--------+----------+
+7 rows in set (0.00 sec)
+ 
+ 
+ 

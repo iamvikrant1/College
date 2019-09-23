@@ -1,0 +1,165 @@
+/*
+Design any database with at least 3 entities and relationships between them. Apply DCL and DDL commands.
+ Draw suitable ER/EER diagram for the system.
+*/
+ 
+> show dbs;
+admin         (empty)
+local         0.078GB
+test          (empty)
+university    0.078GB
+ 
+> use myuniversity;
+switched to db myuniversity
+ 
+> db.createCollection("student");
+{ "ok" : 1 }
+ 
+> db.student.insert({sid:51,name:{fname:"shubham",lname:"shinde"},phno:[8087,9021],marks:78,deptname:"COMP"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.insert({sid:53,name:"sanket",phno:[8557,9221],marks:68,deptname:"BIO"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.insert({sid:51,name:"sanket",phno:8521,marks:68,deptname:"BIO"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.insert({sid:54,name:"omkar",phno:9921,marks:65,deptname:"IT"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.insert({sid:55,name:"shantanu",phno:8855,marks:70,deptname:"MUSIC"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.insert({sid:56,name:"siddhesh",phno:[9055,8870,8052],marks:70,deptname:"MUSIC"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.insert({sid:57,name:"gaurav",phno:7055,marks:80,deptname:"IT"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.student.find();
+{ "_id" : ObjectId("5b87754a88dc13034ef93ea6"), "sid" : 51, "name" : { "fname" : "shubham", "lname" : "shinde" }, "phno" : [ 8087, 9021 ], "marks" : 78, "deptname" : "COMP" }
+{ "_id" : ObjectId("5b87757f88dc13034ef93ea7"), "sid" : 53, "name" : "sanket", "phno" : [ 8557, 9221 ], "marks" : 68, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b87759088dc13034ef93ea8"), "sid" : 51, "name" : "sanket", "phno" : 8521, "marks" : 68, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : "shantanu", "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877a4388dc13034ef93eab"), "sid" : 56, "name" : "siddhesh", "phno" : [ 9055, 8870, 8052 ], "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+ 
+> db.student.update({name:"sanket"},{$set:{marks:70}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+ 
+> db.student.update({sid:59},{$set:{name:"kedar",marks:77}});
+WriteResult({ "nMatched" : 0, "nUpserted" : 0, "nModified" : 0 })
+ 
+> db.student.update({sid:59},{$set:{name:"kedar",marks:77}},{upsert:true});
+WriteResult({
+	"nMatched" : 0,
+	"nUpserted" : 1,
+	"nModified" : 0,
+	"_id" : ObjectId("5b8789223d2b815e7a0abbdb")
+})
+ 
+> db.student.find();
+{ "_id" : ObjectId("5b87754a88dc13034ef93ea6"), "sid" : 51, "name" : { "fname" : "shubham", "lname" : "shinde" }, "phno" : [ 8087, 9021 ], "marks" : 78, "deptname" : "COMP" }
+{ "_id" : ObjectId("5b87757f88dc13034ef93ea7"), "sid" : 53, "name" : "sanket", "phno" : [ 8557, 9221 ], "marks" : 70, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b87759088dc13034ef93ea8"), "sid" : 51, "name" : "sanket", "phno" : 8521, "marks" : 68, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : "shantanu", "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877a4388dc13034ef93eab"), "sid" : 56, "name" : "siddhesh", "phno" : [ 9055, 8870, 8052 ], "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+{ "_id" : ObjectId("5b8789223d2b815e7a0abbdb"), "sid" : 59, "name" : "kedar", "marks" : 77 }
+ 
+>db.student.upadate({name:"sanket"},{$set:{marks:60}},{multi:true});
+WriteResult({ "nMatched" : 2, "nUpserted" : 0, "nModified" : 2 })
+ 
+> db.student.find();
+{ "_id" : ObjectId("5b87754a88dc13034ef93ea6"), "sid" : 51, "name" : { "fname" : "shubham", "lname" : "shinde" }, "phno" : [ 8087, 9021 ], "marks" : 78, "deptname" : "COMP" }
+{ "_id" : ObjectId("5b87757f88dc13034ef93ea7"), "sid" : 53, "name" : "sanket", "phno" : [ 8557, 9221 ], "marks" : 60, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b87759088dc13034ef93ea8"), "sid" : 51, "name" : "sanket", "phno" : 8521, "marks" : 60, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : "shantanu", "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877a4388dc13034ef93eab"), "sid" : 56, "name" : "siddhesh", "phno" : [ 9055, 8870, 8052 ], "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+{ "_id" : ObjectId("5b8789223d2b815e7a0abbdb"), "sid" : 59, "name" : "kedar", "marks" : 77 }
+ 
+> db.student.remove({name:"sanket"});
+WriteResult({ "nRemoved" : 2 })
+ 
+> db.student.find();
+{ "_id" : ObjectId("5b87754a88dc13034ef93ea6"), "sid" : 51, "name" : { "fname" : "shubham", "lname" : "shinde" }, "phno" : [ 8087, 9021 ], "marks" : 78, "deptname" : "COMP" }
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : "shantanu", "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877a4388dc13034ef93eab"), "sid" : 56, "name" : "siddhesh", "phno" : [ 9055, 8870, 8052 ], "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+{ "_id" : ObjectId("5b8789223d2b815e7a0abbdb"), "sid" : 59, "name" : "kedar", "marks" : 77 }
+ 
+>
+> db.createCollection("teacher");
+{ "ok" : 1 }
+ 
+> db.teacher.insert({id:101,name:"Ravi",deptname:"IT",salary:50000,status:"A"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.teacher.insert({id:102,name:"Sameer",deptname:"COMP",salary:60000,status:"A"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.teacher.insert({id:103,name:"Mahesh",deptname:"COMP",salary:55000,status:"A"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.teacher.insert({id:104,name:"Aakash",deptname:"ENTC",salary:50000,status:"NA"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.teacher.insert({id:105,name:"Sumeet",deptname:"BIO",salary:55000,status:"NA"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.teacher.insert({id:106,name:"Vaibhav",deptname:"MECH",salary:50000,status:"A"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.teacher.find();
+{ "_id" : ObjectId("5b90a31207b4789da2a64a69"), "id" : 101, "name" : "Ravi", "deptname" : "IT", "salary" : 50000, "status" : "A" }
+{ "_id" : ObjectId("5b90a32907b4789da2a64a6a"), "id" : 102, "name" : "Sameer", "deptname" : "COMP", "salary" : 60000, "status" : "A" }
+{ "_id" : ObjectId("5b90a33e07b4789da2a64a6b"), "id" : 103, "name" : "Mahesh", "deptname" : "COMP", "salary" : 55000, "status" : "A" }
+{ "_id" : ObjectId("5b90a35d07b4789da2a64a6c"), "id" : 104, "name" : "Aakash", "deptname" : "ENTC", "salary" : 50000, "status" : "NA" }
+{ "_id" : ObjectId("5b90a38707b4789da2a64a6d"), "id" : 105, "name" : "Sumeet", "deptname" : "BIO", "salary" : 55000, "status" : "NA" }
+{ "_id" : ObjectId("5b90a3a107b4789da2a64a6e"), "id" : 106, "name" : "Vaibhav", "deptname" : "MECH", "salary" : 50000, "status" : "A" }
+ 
+> db.teacher.update({salary:50000},{$set:{salary:52000}},{multi:true});
+WriteResult({ "nMatched" : 3, "nUpserted" : 0, "nModified" : 3 })
+ 
+> db.teacher.find();
+{ "_id" : ObjectId("5b90a31207b4789da2a64a69"), "id" : 101, "name" : "Ravi", "deptname" : "IT", "salary" : 52000, "status" : "A" }
+{ "_id" : ObjectId("5b90a32907b4789da2a64a6a"), "id" : 102, "name" : "Sameer", "deptname" : "COMP", "salary" : 60000, "status" : "A" }
+{ "_id" : ObjectId("5b90a33e07b4789da2a64a6b"), "id" : 103, "name" : "Mahesh", "deptname" : "COMP", "salary" : 55000, "status" : "A" }
+{ "_id" : ObjectId("5b90a35d07b4789da2a64a6c"), "id" : 104, "name" : "Aakash", "deptname" : "ENTC", "salary" : 52000, "status" : "NA" }
+{ "_id" : ObjectId("5b90a38707b4789da2a64a6d"), "id" : 105, "name" : "Sumeet", "deptname" : "BIO", "salary" : 55000, "status" : "NA" }
+{ "_id" : ObjectId("5b90a3a107b4789da2a64a6e"), "id" : 106, "name" : "Vaibhav", "deptname" : "MECH", "salary" : 52000, "status" : "A" }
+ 
+> db.teacher.remove({tid:101});
+WriteResult({ "nRemoved" : 1 })
+ 
+> db.teacher.find();
+{ "_id" : ObjectId("5b90a32907b4789da2a64a6a"), "id" : 102, "name" : "Sameer", "deptname" : "COMP", "salary" : 60000, "status" : "A" }
+{ "_id" : ObjectId("5b90a33e07b4789da2a64a6b"), "id" : 103, "name" : "Mahesh", "deptname" : "COMP", "salary" : 55000, "status" : "A" }
+{ "_id" : ObjectId("5b90a35d07b4789da2a64a6c"), "id" : 104, "name" : "Aakash", "deptname" : "ENTC", "salary" : 52000, "status" : "NA" }
+{ "_id" : ObjectId("5b90a38707b4789da2a64a6d"), "id" : 105, "name" : "Sumeet", "deptname" : "BIO", "salary" : 55000, "status" : "NA" }
+{ "_id" : ObjectId("5b90a3a107b4789da2a64a6e"), "id" : 106, "name" : "Vaibhav", "deptname" : "MECH", "salary" : 52000, "status" : "A" }
+ 
+> db.teacher.update( { }, { $set: { join_date: new Date() } }, { multi: true} );
+WriteResult({ "nMatched" : 5, "nUpserted" : 0, "nModified" : 5 })
+ 
+> db.teacher.find();
+{ "_id" : ObjectId("5b87692288dc13034ef93ea1"), "tid" : 102, "name" : "Sameer", "deptname" : "COMP", "salary" : 60000,
+ "status" : "A", "join_date" : ISODate("2018-08-30T04:30:45.427Z") }
+{ "_id" : ObjectId("5b87699888dc13034ef93ea2"), "tid" : 103, "name" : "Mahesh", "deptname" : "COMP", "salary" : 57000,
+ "status" : "A", "join_date" : ISODate("2018-08-30T04:30:45.427Z") }
+{ "_id" : ObjectId("5b87699888dc13034ef93ea3"), "tid" : 104, "name" : "Aakash", "deptname" : "ENTC", "salary" : 52000,
+ "status" : "NA", "join_date" : ISODate("2018-08-30T04:30:45.427Z") }
+{ "_id" : ObjectId("5b8769f388dc13034ef93ea4"), "tid" : 105, "name" : "Sumeet", "deptname" : "BIO", "salary" : 57000, 
+"status" : "NA", "join_date" : ISODate("2018-08-30T04:30:45.427Z") }
+{ "_id" : ObjectId("5b8769f388dc13034ef93ea5"), "tid" : 106, "name" : "Vaibhav", "deptname" : "MECH", "salary" : 52000,
+ "status" : "A", "join_date" : ISODate("2018-08-30T04:30:45.427Z") }
+ 
+ 
+ 
+ 
+ 

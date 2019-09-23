@@ -1,0 +1,624 @@
+/*
+Design and implement a database and apply at least 10 different DML queries for the following task.For a given input 
+string display only those records which match the given pattern or a phrase in the search string. Make use of wild 
+characters and LIKE operator for the same. Make use of Boolean and arithmetic operators wherever necessary.
+*/
+ 
+ 
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| college            |
+| mysql              |
+| myuniversity       |
+| performance_schema |
+| university         |
+| university37031    |
+| university_5621    |
++--------------------+
+8 rows in set (0.03 sec)
+ 
+mysql> use myuniversity
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+ 
+Database changed
+mysql> show tables;
++------------------------+
+| Tables_in_myuniversity |
++------------------------+
+| advisor                |
+| classroom              |
+| course                 |
+| department             |
+| instructor             |
+| section                |
+| student                |
+| takes                  |
+| teaches                |
+| timeslot               |
++------------------------+
+10 rows in set (0.00 sec)
+ 
+mysql> insert into department(deptname,building,budget) values("computer",1,500000);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into department(deptname,building,budget) values("music",2,1000000);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into department(deptname,building,budget) values("physics",3,400000);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into department(deptname,building,budget) values("history",4,300000);
+Query OK, 1 row affected (0.12 sec)
+ 
+mysql> insert into department(deptname,building,budget) values("biology",5,700000);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> select * from department;
++----------+----------+---------+
+| deptname | building | budget  |
++----------+----------+---------+
+| biology  |        5 |  700000 |
+| computer |        1 |  500000 |
+| history  |        4 |  300000 |
+| music    |        2 | 1000000 |
+| physics  |        3 |  400000 |
++----------+----------+---------+
+5 rows in set (0.00 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(111,"ABC",65000,"computer");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(112,"PQR",90000,"music");
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(113,"EFG",70000,"physics");
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(114,"XYZ",50000,"history");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(115,"LMN",90000,"music");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(116,"UVW",70000,"physics");
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into instructor(instID,name,salary,deptname) values(117,"STU",55000,"biology");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> select * from instructor;
++--------+------+--------+----------+
+| instID | name | salary | deptname |
++--------+------+--------+----------+
+|    111 | ABC  |  65000 | computer |
+|    112 | PQR  |  90000 | music    |
+|    113 | EFG  |  70000 | physics  |
+|    114 | XYZ  |  50000 | history  |
+|    115 | LMN  |  90000 | music    |
+|    116 | UVW  |  70000 | physics  |
+|    117 | STU  |  55000 | biology  |
++--------+------+--------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(52,"Rakesh","computer",9);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(53,"Chetan","music",9);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(54,"Mayuri","physics",9);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(55,"Priya","biology",7);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(56,"Tanvi","computer",9);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(57,"Anushka","history",9);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into student(sid,name,deptname,tot_cred) values(51,"Aashish","music",8);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> update student set tot_cred=7 where name="Tanvi";
+Query OK, 1 row affected (0.11 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+ 
+mysql> select * from student;
++-----+---------+----------+----------+
+| sid | name    | tot_cred | deptname |
++-----+---------+----------+----------+
+|  51 | Aashish |        8 | music    |
+|  52 | Rakesh  |        9 | computer |
+|  53 | Chetan  |        9 | music    |
+|  54 | Mayuri  |        9 | physics  |
+|  55 | Priya   |        7 | biology  |
+|  56 | Tanvi   |        7 | computer |
+|  57 | Anushka |        9 | history  |
++-----+---------+----------+----------+
+7 rows in set (0.00 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("bio_1","Intro_tobio",4,"biology");
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("phy_2","physics principles",4,"physics");
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> update course set title="Intro to bio" where courseid="bio_1";
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("cs_1","Intro to cs",3,"computer");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("cs_2","robotics",4,"computer"); 
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("bio_2","genetics",3,"biology"); 
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("his_1","World History",4,"history");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("MV_1","Music Audio",3,"music"); 
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into course(courseid,title,credits,deptname) values("MV_2","Music Video ",4,"music");
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> select * from course;
++----------+--------------------+---------+----------+
+| courseid | title              | credits | deptname |
++----------+--------------------+---------+----------+
+| bio_1    | Intro to bio       |       4 | biology  |
+| bio_2    | genetics           |       3 | biology  |
+| cs_1     | Intro to cs        |       3 | computer |
+| cs_2     | robotics           |       4 | computer |
+| his_1    | World History      |       4 | history  |
+| MV_1     | Music Audio        |       3 | music    |
+| MV_2     | Music Video        |       4 | music    |
+| phy_2    | physics principles |       4 | physics  |
++----------+--------------------+---------+----------+
+8 rows in set (0.00 sec)
+ 
+mysql> insert into classroom(building,roomno,capacity) values(1,11,120);
+Query OK, 1 row affected (0.07 sec)
+ 
+mysql> insert into classroom(building,roomno,capacity) values(2,21,120);
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into classroom(building,roomno,capacity) values(3,32,60);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into classroom(building,roomno,capacity) values(4,42,60);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into classroom(building,roomno,capacity) values(5,52,180);
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> select * from classroom;
++----------+--------+----------+
+| building | roomno | capacity |
++----------+--------+----------+
+|        1 |     11 |      120 |
+|        2 |     21 |      120 |
+|        3 |     32 |       60 |
+|        4 |     42 |       60 |
+|        5 |     52 |      180 |
++----------+--------+----------+
+5 rows in set (0.00 sec)
+ 
+mysql> insert into timeslot(tid,day,starttime,endtime) values(1,"monday","9am","2pm");
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into timeslot(tid,day,starttime,endtime) values(2,"monday","10am","3pm");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into timeslot(tid,day,starttime,endtime) values(3,"tuesday","9am","2pm");
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into timeslot(tid,day,starttime,endtime) values(4,"thursday","8am","10am");
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into timeslot(tid,day,starttime,endtime) values(5,"friday","7am","9am");
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> select * from timeslot;
++-----+----------+-----------+---------+
+| tid | day      | starttime | endtime |
++-----+----------+-----------+---------+
+|   1 | monday   | 9am       | 2pm     |
+|   2 | monday   | 10am      | 3pm     |
+|   3 | tuesday  | 9am       | 2pm     |
+|   4 | thursday | 8am       | 10am    |
+|   5 | friday   | 7am       | 9am     |
++-----+----------+-----------+---------+
+5 rows in set (0.00 sec)
+ 
+mysql> insert into advisor(sid,instID) values(51,112);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into advisor(sid,instID) values(52,111);
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into advisor(sid,instID) values(53,114);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into advisor(sid,instID) values(54,113);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into advisor(sid,instID) values(55,112);
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> select * from advisor;
++------+--------+
+| sid  | instID |
++------+--------+
+|   51 |    112 |
+|   52 |    111 |
+|   53 |    114 |
+|   54 |    113 |
+|   55 |    112 |
++------+--------+
+5 rows in set (0.00 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("bio_1","s11","I","FY",5,52,1);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("bio_2","s11","I","FY",4,42,2);
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("phy_2","s12","II","FY",3,32,3);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("cs_1","s13","II","SY",1,11,4);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("cs_2","s13","II","SY",3,32,5);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("MV_1","s14","II","TY",2,21,4);
+Query OK, 1 row affected (0.03 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("MV_2","s14","II","TY",2,21,2);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("his_1","s15","I","FY",4,42,3);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into section(courseid,secid,semester,year,building,roomno,tid) values("bio_1","s15","II","TY",5,52,3);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> select * from section;
++----------+-------+----------+------+------+----------+--------+
+| courseid | secid | semester | year | tid  | building | roomno |
++----------+-------+----------+------+------+----------+--------+
+| bio_1    | s11   | I        | FY   |    1 |        5 |     52 |
+| bio_1    | s15   | II       | TY   |    3 |        5 |     52 |
+| bio_2    | s11   | I        | FY   |    2 |        4 |     42 |
+| cs_1     | s13   | II       | SY   |    4 |        1 |     11 |
+| cs_2     | s13   | II       | SY   |    5 |        3 |     32 |
+| his_1    | s15   | I        | FY   |    3 |        4 |     42 |
+| MV_1     | s14   | II       | TY   |    4 |        2 |     21 |
+| MV_2     | s14   | II       | TY   |    2 |        2 |     21 |
+| phy_2    | s12   | II       | FY   |    3 |        3 |     32 |
++----------+-------+----------+------+------+----------+--------+
+9 rows in set (0.00 sec)
+ 
+mysql> insert into teaches(courseid,secid,semester,year,instId) values("bio_1","s11","I","FY",117);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into teaches(courseid,secid,semester,year,instId) values("phy_2","s12","II","FY",113);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into teaches(courseid,secid,semester,year,instId) values("cs_2","s13","II","SY",111);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into teaches(courseid,secid,semester,year,instId) values("bio_2","s11","I","FY",117);
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into teaches(courseid,secid,semester,year,instId) values("MV_1","s14","II","TY",115);
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> select * from teaches;
++--------+----------+-------+----------+------+
+| instID | courseid | secid | semester | year |
++--------+----------+-------+----------+------+
+|    117 | bio_1    | s11   | I        | FY   |
+|    117 | bio_2    | s11   | I        | FY   |
+|    111 | cs_2     | s13   | II       | SY   |
+|    115 | MV_1     | s14   | II       | TY   |
+|    113 | phy_2    | s12   | II       | FY   |
++--------+----------+-------+----------+------+
+5 rows in set (0.00 sec)
+ 
+mysql> insert into takes(sid,courseid,secid,semester,year,grades) values(51,"phy_2","s12","II","FY","A");
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> alter table takes change grades grade varchar(10);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+ 
+mysql> insert into takes(sid,courseid,secid,semester,year,grade) values(52,"cs_1","s13","II","SY","A+");
+Query OK, 1 row affected (0.02 sec)
+ 
+mysql> insert into takes(sid,courseid,secid,semester,year,grade) values(53,"MV_1","s14","II","TY","A");
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into takes(sid,courseid,secid,semester,year,grade) values(54,"his_1","s15","I","FY","B");
+Query OK, 1 row affected (0.06 sec)
+ 
+mysql> insert into takes(sid,courseid,secid,semester,year,grade) values(55,"bio_1","s11","I","FY","B+");
+Query OK, 1 row affected (0.05 sec)
+ 
+mysql> insert into takes(sid,courseid,secid,semester,year,grade) values(56,"bio_2","s11","I","FY","A");
+Query OK, 1 row affected (0.04 sec)
+ 
+mysql> select * from takes;
++-----+----------+-------+----------+------+-------+
+| sid | courseid | secid | semester | year | grade |
++-----+----------+-------+----------+------+-------+
+|  51 | phy_2    | s12   | II       | FY   | A     |
+|  52 | cs_1     | s13   | II       | SY   | A+    |
+|  53 | MV_1     | s14   | II       | TY   | A     |
+|  54 | his_1    | s15   | I        | FY   | B     |
+|  55 | bio_1    | s11   | I        | FY   | B+    |
+|  56 | bio_2    | s11   | I        | FY   | A     |
++-----+----------+-------+----------+------+-------+
+6 rows in set (0.00 sec)
+ 
+ 
+ 
+ 
+ 
+ 
+Q:Find names of instructor working in physics department
+ 
+mysql> select name from instructor where deptname="physics";
++------+
+| name |
++------+
+| EFG  |
+| UVW  |
++------+
+2 rows in set (0.00 sec)
+ 
+Q:Find the names of department where budget is greater than 500000
+ 
+mysql> select deptname from department where budget>500000;
++----------+
+| deptname |
++----------+
+| biology  |
+| music    |
++----------+
+2 rows in set (0.00 sec)
+ 
+Q:Find names of all student from computer department
+ 
+mysql> select name from student where deptname="computer";
++--------+
+| name   |
++--------+
+| Rakesh |
+| Tanvi  |
++--------+
+2 rows in set (0.00 sec)
+ 
+Q:Find the names of students studying in music department and tot_cred greater than 7
+ 
+mysql> select name from student where deptname="music" && tot_cred>7;
++---------+
+| name    |
++---------+
+| Aashish |
+| Chetan  |
++---------+
+2 rows in set (0.00 sec)
+ 
+Q:Find out the roomno alongwith capacity
+ 
+mysql> select roomno,capacity from classroom;
++--------+----------+
+| roomno | capacity |
++--------+----------+
+|     11 |      120 |
+|     21 |      120 |
+|     32 |       60 |
+|     42 |      180 |
+|     52 |       60 |
++--------+----------+
+5 rows in set (0.00 sec)
+ 
+Q:Find the all department-names along with title 
+ 
+mysql> select deptname,title from course;
++----------+--------------------+
+| deptname | title              |
++----------+--------------------+
+| biology  | Intro_to bio       |
+| biology  | genetics           |
+| computer | Intro to cs        |
+| computer | robotics           |
+| history  | World History      |
+| music    | Music Audio        |
+| music    | Music Video        |
+| physics  | physics principles |
++----------+--------------------+
+8 rows in set (0.00 sec)
+ 
+Q:Find the title of courses from music department
+ 
+mysql> select title from course where deptname="music";
++--------------+
+| title        |
++--------------+
+| Music Audio  |
+| Music Video  |
++--------------+
+2 rows in set (0.00 sec)
+ 
+Q:List the names of instructor with department name and building
+ 
+mysql> select name,instructor.deptname,building from instructor,department where department.deptname=instructor.deptname;
++------+----------+----------+
+| name | deptname | building |
++------+----------+----------+
+| STU  | biology  |        5 |
+| ABC  | computer |        1 |
+| XYZ  | history  |        4 |
+| PQR  | music    |        2 |
+| LMN  | music    |        2 |
+| EFG  | physics  |        3 |
+| UVW  | physics  |        3 |
++------+----------+----------+
+7 rows in set (0.00 sec)
+ 
+Q:Find out only instructor who have taught atleast some course(s)
+ 
+mysql> select name from instructor,teaches where instructor.instID=teaches.instID;
++------+
+| name |
++------+
+| STU  |
+| STU  |
+| ABC  |
+| LMN  |
+| EFG  |
++------+
+5 rows in set (0.00 sec)
+ 
+Q:Find out instructor who have taught atleast some courses from computer department
+ 
+mysql> select name,courseid from instructor,teaches where instructor.instID=teaches.instID && instructor.deptname="computer";
++------+----------+
+| name | courseid |
++------+----------+
+| ABC  | cs_2     |
++------+----------+
+1 row in set (0.00 sec)
+ 
+Q:Find all instructor in university who have taught some course(s).Find name and courseid of all courses they have taught
+ 
+mysql> select name,courseid from instructor,teaches where instructor.instID=teaches.instID;
++------+----------+
+| name | courseid |
++------+----------+
+| STU  | bio_1    |
+| STU  | bio_2    |
+| ABC  | cs_2     |
+| LMN  | MV_1     |
+| EFG  | phy_2    |
++------+----------+
+5 rows in set (0.00 sec)
+ 
+Q:List names of instructor along with titles of courses that they teach
+ 
+mysql> select name,title from instructor,teaches,course where instructor.instID=teaches.instID && course.courseid=teaches.courseid;
++------+--------------------+
+| name | title              |
++------+--------------------+
+| STU  | Intro_to bio       |
+| STU  | genetics           |
+| ABC  | robotics           |
+| LMN  | Music Audio        |
+| EFG  | physics principles |
++------+--------------------+
+5 rows in set (0.00 sec)
+ 
+Q:Find names of all department where name includes substring "i"
+ 
+mysql> select deptname from department where deptname like "%i%";
++----------+
+| deptname |
++----------+
+| biology  |
+| history  |
+| music    |
+| physics  |
++----------+
+4 rows in set (0.00 sec)
+ 
+Q:Find names of student whose names are exactly of 7-characters
+ 
+mysql> select name from student where name like "_______";
++---------+
+| name    |
++---------+
+| Aashish |
+| Anushka |
++---------+
+2 rows in set (0.00 sec)
+ 
+Q:Find title and department name where department name must end with "y"
+ 
+mysql> select title,deptname from course where deptname like "%y";
++---------------+----------+
+| title         | deptname |
++---------------+----------+
+| Intro_to bio  | biology  |
+| genetics      | biology  |
+| World History | history  |
++---------------+----------+
+3 rows in set (0.00 sec)
+ 
+Q:Find names of instructor with salary betweeen 50000 and 70000
+ 
+mysql> select name from instructor where salary between 50000 and 70000;
++------+
+| name |
++------+
+| ABC  |
+| EFG  |
+| XYZ  |
+| UVW  |
+| STU  |
++------+
+5 rows in set (0.00 sec)
+ 
+Q:Find set of all courses taught in FY I-sem and TY II-sem
+ 
+mysql> select * from section where (semester="I" && year="FY") && (semester="II" && year="TY");
+Empty set (0.00 sec)
+ 
+Q:Find set of all courses taught in FY I-sem or TY II-sem
+ 
+mysql> select * from section where (semester="I" && year="FY") || (semester="II" && year="TY");
++----------+-------+----------+------+------+----------+--------+
+| courseid | secid | semester | year | tid  | building | roomno |
++----------+-------+----------+------+------+----------+--------+
+| bio_1    | s11   | I        | FY   |    1 |        5 |     52 |
+| bio_1    | s15   | II       | TY   |    3 |        5 |     52 |
+| bio_2    | s11   | I        | FY   |    2 |        4 |     42 |
+| his_1    | s15   | I        | FY   |    3 |        4 |     42 |
+| MV_1     | s14   | II       | TY   |    4 |        2 |     21 |
+| MV_2     | s14   | II       | TY   |    2 |        2 |     21 |
++----------+-------+----------+------+------+----------+--------+
+6 rows in set (0.00 sec)
+ 
+Q:Find set of all courses taught in FY I-sem but not in TY II-sem
+ 
+mysql> select * from section where (semester="I" && year="FY") && (semester!="II" && year!="TY");
++----------+-------+----------+------+------+----------+--------+
+| courseid | secid | semester | year | tid  | building | roomno |
++----------+-------+----------+------+------+----------+--------+
+| bio_1    | s11   | I        | FY   |    1 |        5 |     52 |
+| bio_2    | s11   | I        | FY   |    2 |        4 |     42 |
+| his_1    | s15   | I        | FY   |    3 |        4 |     42 |
++----------+-------+----------+------+------+----------+--------+
+3 rows in set (0.00 sec)
+ 
+Q:Give increment 20000 to instructor whose salary is less than 20000 otherwise give 30000
+ 
+mysql> update instructor set salary=case when salary<20000 then salary+20000 else salary+30000 end;
+Query OK, 7 rows affected (0.04 sec)
+Rows matched: 7  Changed: 7  Warnings: 0
+ 
+ 
+ 
+ 

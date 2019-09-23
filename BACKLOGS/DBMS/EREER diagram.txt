@@ -1,0 +1,608 @@
+Problem Statement :Design any database with at least 3 entities and relationships between them. Apply DCL and DDL commands. Draw suitable ER/EER diagram for the system.
+
+1:Find information of first student
+
+2:Find student information where marks>70
+
+3:Find student information where marks<70
+
+4:Find student information from IT department where marks<70
+
+5:Find the student information of students having name="sanket"
+
+6:Find the student information of students having name="sanket" and marks=68
+
+7:Find the student details of IT department where marks>75
+
+8:Find the student details where department is IT or marks>75
+
+9:Find the student details who are not from IT department
+
+10:Find the teachers of COMP department
+
+11:Find information of teachers whose salary is greater than 50000
+
+12:Find information of teachers whose salary is less than 55000
+
+13:Find the information of teachers whose salary=50000 and status=A
+
+14:Find the information of teachers whose salary=50000 or status=A
+
+15:Find the information of teachers whose salary=50000 or status=A
+
+16:Find the information of teachers whose salary=50000 or status=NA
+
+17:Find the teachers information whose status is not equall to "A"
+
+18:Find the teacher information whose salary id is before 104 and salary is 52000
+
+/*
+Design any database with at least 3 entities and relationships between them. Apply DCL and DDL commands. Draw 		suitable ER/EER diagram for the system.
+*/
+ 
+Q:Find information of first student
+Q:Find student information where marks>70
+Q:Find student information where marks<70 
+Q:Find student information from IT department where marks<70
+Q:Find the student information of students having name="sanket"
+Q:Find the student information of students having name="sanket" and marks=68
+Q:Find the student details of IT department where marks>75
+Q:Find the student details where department is IT or marks>75
+Q:Find the student details who are not from IT department
+Q:Find the teachers of COMP department
+Q:Find information of teachers whose salary is greater than 50000
+Q:Find information of teachers whose salary is less than 55000
+Q:Find the information of teachers whose salary=50000 and status=A
+Q:Find the information of teachers whose salary=50000 or status=A
+Q:Find the information of teachers whose salary=50000 or status=A
+Q:Find the information of teachers whose salary=50000 or status=NA
+Q:Find the teachers information whose status is not equall to "A" 
+Q:Find the teacher information whose salary id is before 104 and salary is 52000
+ 
+ 
+> show dbs;
+admin                (empty)
+local                0.078GB
+my_order_collection  0.078GB
+myuniversity         0.078GB
+university           0.078GB
+ 
+> use myuniversity;
+switched to db myuniversity
+ 
+> show collections;
+student
+system.indexes
+teacher
+ 
+1:Find information of first student
+> db.student.findOne();
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+ 
+2:Find student information where marks>70
+> db.student.find({marks:{$gt:70}}).pretty();
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+{
+	"_id" : ObjectId("5b877cc488dc13034ef93eac"),
+	"sid" : 57,
+	"name" : "gaurav",
+	"phno" : 7055,
+	"marks" : 80,
+	"deptname" : "IT"
+}
+ 
+3:Find student information where marks<70 
+> db.student.find({marks:{$lt:70}}).pretty();
+{
+	"_id" : ObjectId("5b87757f88dc13034ef93ea7"),
+	"sid" : 53,
+	"name" : "sanket",
+	"phno" : [
+		8557,
+		9221
+	],
+	"marks" : 68,
+	"deptname" : "BIO"
+}
+{
+	"_id" : ObjectId("5b87759088dc13034ef93ea8"),
+	"sid" : 51,
+	"name" : "sanket",
+	"phno" : 8521,
+	"marks" : 68,
+	"deptname" : "BIO"
+}
+{
+	"_id" : ObjectId("5b8779e588dc13034ef93ea9"),
+	"sid" : 54,
+	"name" : "omkar",
+	"phno" : 9921,
+	"marks" : 65,
+	"deptname" : "IT"
+}
+ 
+4:Find student information from IT department where marks<70
+> db.student.find({marks:{$lt:70},deptname:"IT"}).pretty();
+{
+	"_id" : ObjectId("5b8779e588dc13034ef93ea9"),
+	"sid" : 54,
+	"name" : "omkar",
+	"phno" : 9921,
+	"marks" : 65,
+	"deptname" : "IT"
+}
+ 
+5:Find the student information of students having name="sanket"
+> db.student.find({name:"sanket"});
+{ "_id" : ObjectId("5b87757f88dc13034ef93ea7"), "sid" : 53, "name" : "sanket", "phno" : [ 8557, 9221 ], "marks" : 70, "deptname" : "BIO" }
+{ "_id" : ObjectId("5b87759088dc13034ef93ea8"), "sid" : 51, "name" : "sanket", "phno" : 8521, "marks" : 68, "deptname" : "BIO" }
+ 
+6:Find the student information of students having name="sanket" and marks=68
+> db.student.find({name:"sanket",marks:68});
+{ "_id" : ObjectId("5b87759088dc13034ef93ea8"), "sid" : 51, "name" : "sanket", "phno" : 8521, "marks" : 68, "deptname" : "BIO" }
+ 
+7:Find the student details of IT department where marks>75
+> db.student.find({deptname:"IT",marks:{$gt:75}}).pretty();
+{
+	"_id" : ObjectId("5b877cc488dc13034ef93eac"),
+	"sid" : 57,
+	"name" : "gaurav",
+	"phno" : 7055,
+	"marks" : 80,
+	"deptname" : "IT"
+}
+ 
+8:Find the student details where department is IT or marks>75
+> db.student.find({$or:[{deptname:"IT"},{marks:{$gt:75}}]}).pretty();
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+{
+	"_id" : ObjectId("5b8779e588dc13034ef93ea9"),
+	"sid" : 54,
+	"name" : "omkar",
+	"phno" : 9921,
+	"marks" : 65,
+	"deptname" : "IT"
+}
+{
+	"_id" : ObjectId("5b877cc488dc13034ef93eac"),
+	"sid" : 57,
+	"name" : "gaurav",
+	"phno" : 7055,
+	"marks" : 80,
+	"deptname" : "IT"
+}
+{
+	"_id" : ObjectId("5b8789223d2b815e7a0abbdb"),
+	"sid" : 59,
+	"name" : "kedar",
+	"marks" : 77
+}
+ 
+9:Find the student details who are not from IT department
+> db.student.find({deptname:{$ne:"IT"}}).pretty();
+{
+	"_id" : ObjectId("5b87754a88dc13034ef93ea6"),
+	"sid" : 51,
+	"name" : {
+		"fname" : "shubham",
+		"lname" : "shinde"
+	},
+	"phno" : [
+		8087,
+		9021
+	],
+	"marks" : 78,
+	"deptname" : "COMP"
+}
+{
+	"_id" : ObjectId("5b877a1988dc13034ef93eaa"),
+	"sid" : 55,
+	"name" : "shantanu",
+	"phno" : 8855,
+	"marks" : 70,
+	"deptname" : "MUSIC"
+}
+{
+	"_id" : ObjectId("5b877a4388dc13034ef93eab"),
+	"sid" : 56,
+	"name" : "siddhesh",
+	"phno" : [
+		9055,
+		8870,
+		8052
+	],
+	"marks" : 70,
+	"deptname" : "MUSIC"
+}
+{
+	"_id" : ObjectId("5b8789223d2b815e7a0abbdb"),
+	"sid" : 59,
+	"name" : "kedar",
+	"marks" : 77
+}
+ 
+ 
+10:Find the teachers of COMP department
+> db.teacher.find({deptname:"COMP"}).pretty();
+{
+	"_id" : ObjectId("5b87692288dc13034ef93ea1"),
+	"tid" : 102,
+	"name" : "Sameer",
+	"deptname" : "COMP",
+	"salary" : 60000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea2"),
+	"tid" : 103,
+	"name" : "Mahesh",
+	"deptname" : "COMP",
+	"salary" : 55000,
+	"status" : "A"
+}
+11:Find information of teachers whose salary is greater than 50000
+> db.teacher.find({salary:{$gt:50000}}).pretty();
+{
+	"_id" : ObjectId("5b87692288dc13034ef93ea1"),
+	"tid" : 102,
+	"name" : "Sameer",
+	"deptname" : "COMP",
+	"salary" : 60000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea2"),
+	"tid" : 103,
+	"name" : "Mahesh",
+	"deptname" : "COMP",
+	"salary" : 55000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+ 
+12:Find information of teachers whose salary is less than 55000
+> db.teacher.find({salary:{$lt:55000}}).pretty();
+{
+	"_id" : ObjectId("5b87690f88dc13034ef93ea0"),
+	"tid" : 101,
+	"name" : "Ravi",
+	"deptname" : "IT",
+	"salary" : 50000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 50000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea5"),
+	"tid" : 106,
+	"name" : "Vaibhav",
+	"deptname" : "MECH",
+	"salary" : 50000,
+	"status" : "A"
+}
+ 
+13:Find the information of teachers whose salary=50000 and status=A
+> db.teacher.find({salary:50000,status:"A"}).pretty();
+{
+	"_id" : ObjectId("5b87690f88dc13034ef93ea0"),
+	"tid" : 101,
+	"name" : "Ravi",
+	"deptname" : "IT",
+	"salary" : 50000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea5"),
+	"tid" : 106,
+	"name" : "Vaibhav",
+	"deptname" : "MECH",
+	"salary" : 50000,
+	"status" : "A"
+}
+ 
+14:Find the information of teachers whose salary=50000 or status=A
+> db.teacher.find( { $or: [ { status: "A" } , { sal:50000 } ] } );
+{ "_id" : ObjectId("5b87690f88dc13034ef93ea0"), "tid" : 101, "name" : "Ravi", "deptname" : "IT", "salary" : 50000, "status" : "A" }
+{ "_id" : ObjectId("5b87692288dc13034ef93ea1"), "tid" : 102, "name" : "Sameer", "deptname" : "COMP", "salary" : 60000, "status" : "A" }
+{ "_id" : ObjectId("5b87699888dc13034ef93ea2"), "tid" : 103, "name" : "Mahesh", "deptname" : "COMP", "salary" : 55000, "status" : "A" }
+{ "_id" : ObjectId("5b8769f388dc13034ef93ea5"), "tid" : 106, "name" : "Vaibhav", "deptname" : "MECH", "salary" : 50000, "status" : "A" }
+ 
+15:Find the information of teachers whose salary=50000 or status=A
+> db.teacher.find( { $or: [ { status: "A" } , { sal:50000 } ] } ).pretty();
+{
+	"_id" : ObjectId("5b87690f88dc13034ef93ea0"),
+	"tid" : 101,
+	"name" : "Ravi",
+	"deptname" : "IT",
+	"salary" : 50000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87692288dc13034ef93ea1"),
+	"tid" : 102,
+	"name" : "Sameer",
+	"deptname" : "COMP",
+	"salary" : 60000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea2"),
+	"tid" : 103,
+	"name" : "Mahesh",
+	"deptname" : "COMP",
+	"salary" : 55000,
+	"status" : "A"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea5"),
+	"tid" : 106,
+	"name" : "Vaibhav",
+	"deptname" : "MECH",
+	"salary" : 50000,
+	"status" : "A"
+}
+ 
+16:Find the information of teachers whose salary=50000 or status=NA
+> db.teacher.find( { $or: [ { status: "NA" } , { sal:50000 } ] } ).pretty();
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 50000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+ 
+17:Find the teacher's information whose status is not equall to "A" 
+> db.teacher.find({status:{$ne:"A"}}).pretty();
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 52000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea4"),
+	"tid" : 105,
+	"name" : "Sumeet",
+	"deptname" : "BIO",
+	"salary" : 55000,
+	"status" : "NA"
+}
+ 
+18:Find the teacher information whose salary id is before 104 and salary is 52000
+> db.teacher.find({$or:[{id:{$lt:104}},{salary:52000}]}).pretty();
+{
+	"_id" : ObjectId("5b87699888dc13034ef93ea3"),
+	"tid" : 104,
+	"name" : "Aakash",
+	"deptname" : "ENTC",
+	"salary" : 52000,
+	"status" : "NA"
+}
+{
+	"_id" : ObjectId("5b8769f388dc13034ef93ea5"),
+	"tid" : 106,
+	"name" : "Vaibhav",
+	"deptname" : "MECH",
+	"salary" : 52000,
+	"status" : "A"
+}
+ 
+ 
+ 
+ 
+ 
+ 
+> db.createCollection("user");
+{ "ok" : 1 }
+ 
+> db.user.insert({id:1,Y:"NULL"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.user.insert({id:2,Y:1});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.user.insert({id:3,Y:null});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.user.find();
+{ "_id" : ObjectId("5b90c09947866b07bb59af25"), "id" : 1, "Y" : "NULL" }
+{ "_id" : ObjectId("5b90c0b947866b07bb59af26"), "id" : 2, "Y" : 1 }
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+ 
+> db.user.insert({id:4,Y:4});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.user.find();
+{ "_id" : ObjectId("5b90c09947866b07bb59af25"), "id" : 1, "Y" : "NULL" }
+{ "_id" : ObjectId("5b90c0b947866b07bb59af26"), "id" : 2, "Y" : 1 }
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+{ "_id" : ObjectId("5b90c12147866b07bb59af28"), "id" : 4, "Y" : 4 }
+ 
+> db.user.insert({id:5,Y:5});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.user.find();
+{ "_id" : ObjectId("5b90c09947866b07bb59af25"), "id" : 1, "Y" : "NULL" }
+{ "_id" : ObjectId("5b90c0b947866b07bb59af26"), "id" : 2, "Y" : 1 }
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+{ "_id" : ObjectId("5b90c12147866b07bb59af28"), "id" : 4, "Y" : 4 }
+{ "_id" : ObjectId("5b90c15847866b07bb59af29"), "id" : 5, "Y" : 5 }
+ 
+> db.user.find({Y:null});
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+ 
+> db.user.insert({id:6,name:"ABC",address:"PUNE"});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.user.find({Y:null});
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+{ "_id" : ObjectId("5b90c1dd47866b07bb59af2a"), "id" : 6, "name" : "ABC", "address" : "PUNE" }
+ 
+> db.user.find({Y:{"$in":[null],"$exists":true}});
+{ "_id" : ObjectId("5b90c0df47866b07bb59af27"), "id" : 3, "Y" : null }
+ 
+> db.student.find({name:{$regex:/a/}});
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+{ "_id" : ObjectId("5b877a1988dc13034ef93eaa"), "sid" : 55, "name" : "shantanu", "phno" : 8855, "marks" : 70, "deptname" : "MUSIC" }
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+{ "_id" : ObjectId("5b8789223d2b815e7a0abbdb"), "sid" : 59, "name" : "kedar", "marks" : 77 }
+ 
+> db.student.find({name:{$regex:/^g/}});
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+ 
+> db.student.find({name:{$regex:/v$/}});
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+ 
+> db.student.find({name:{$regex:/^g.*/}});
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+ 
+> db.student.find({name:{$regex:/^g.*$/}});
+{ "_id" : ObjectId("5b877cc488dc13034ef93eac"), "sid" : 57, "name" : "gaurav", "phno" : 7055, "marks" : 80, "deptname" : "IT" }
+ 
+> db.student.find({name:{$regex:/^o.*/}});
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+ 
+> db.student.find({name:{$regex:/^o.*$/}});
+{ "_id" : ObjectId("5b8779e588dc13034ef93ea9"), "sid" : 54, "name" : "omkar", "phno" : 9921, "marks" : 65, "deptname" : "IT" }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+> db.createCollection("food");
+{ "ok" : 1 }
+ 
+> db.food.insert({fruit:["apple","banana","mango"]});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.food.insert({fruit:["apple","orange","peach"]});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.food.insert({fruit:["cherry","banana","apple"]});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.food.find();
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango" ] }
+{ "_id" : ObjectId("5b90cc8f47866b07bb59af2c"), "fruit" : [ "apple", "orange", "peach" ] }
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple" ] }
+ 
+> db.food.find({fruit:"banana"});
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango" ] }
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple" ] }
+ 
+> db.food.find({fruit:{$all:["banana","apple"]}});
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango" ] }
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple" ] }
+ 
+> db.food.find({fruit:{$all:["banana","mango"]}});
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango" ] }
+ 
+> db.food.find({fruit:{$all:["mango","cherry"]}});
+ 
+> db.food.find({fruit:{$all:["banana","cherry"]}});
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple" ] }
+ 
+> db.food.find({fruit:{"$size":3}});
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango" ] }
+{ "_id" : ObjectId("5b90cc8f47866b07bb59af2c"), "fruit" : [ "apple", "orange", "peach" ] }
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple" ] }
+ 
+> db.food.insert({fruit:["cherry","banana"]});
+WriteResult({ "nInserted" : 1 })
+ 
+> db.food.find({fruit:{"$size":2}});
+{ "_id" : ObjectId("5b90cf8d47866b07bb59af2e"), "fruit" : [ "cherry", "banana" ] }
+ 
+> db.food.update({fruit:"cherry"},{"$push":{fruit:"strawberry"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+ 
+> db.food.find();
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango" ] }
+{ "_id" : ObjectId("5b90cc8f47866b07bb59af2c"), "fruit" : [ "apple", "orange", "peach" ] }
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple", "strawberry" ] }
+{ "_id" : ObjectId("5b90cf8d47866b07bb59af2e"), "fruit" : [ "cherry", "banana" ] }
+ 
+> db.food.update({ "_id" : ObjectId("5b90cc7547866b07bb59af2b")},{"$push":{fruit:"strawberry"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+ 
+> db.food.find();
+{ "_id" : ObjectId("5b90cc7547866b07bb59af2b"), "fruit" : [ "apple", "banana", "mango", "strawberry" ] }
+{ "_id" : ObjectId("5b90cc8f47866b07bb59af2c"), "fruit" : [ "apple", "orange", "peach" ] }
+{ "_id" : ObjectId("5b90cca047866b07bb59af2d"), "fruit" : [ "cherry", "banana", "apple", "strawberry" ] }
+{ "_id" : ObjectId("5b90cf8d47866b07bb59af2e"), "fruit" : [ "cherry", "banana" ] }
+ 
+> db.food.find({fruit:{"&size":{$gt:3}}});
+ 
+> db.food.find({fruit:{"&size":{"$gt":3}}});
+ 
+ 
+ 

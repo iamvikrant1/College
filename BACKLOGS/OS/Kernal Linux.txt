@@ -1,0 +1,156 @@
+Problem Statement:
+
+Implement a new system call in the kernel space, add this new system call in the Linux
+
+kernel by the compilation of this kernel (any kernel source, any architecture and any Linux kernel
+
+distribution) and demonstrate the use of this embedded system call using C program in user space.
+
+
+Define a new system call
+
+Steps:
+1. Download appropriate kernel from www.kernel.org.
+
+
+2. To extract the tar file run the following command.
+
+sudo tar xvf linux4.4.0.tar.xz C /usr/src/
+
+
+3.Create a directory hello in the kernel source directory:
+
+ie. $cd /usr/src/linux-4.4.0-66-generic
+
+$mkdir hello
+
+
+4.Change into this directory
+
+ie. $cd hello
+
+
+5.Create a “hello.c” file in this folder and add the definition of the system call to it.
+
+
+#include <linux/kernel.h>
+asmlinkage long sys_hello(void)
+{
+printk(KERN_INFO “Hello world\n”);
+return 0;
+
+}
+
+
+6.Create a “Makefile” in the hello folder and add the following line in it.
+
+$gedit Makefilec
+
+obj-y := hello.o
+// This is to ensure that the hello.c file is compiled and included in the kernel source code.
+
+
+7.Add the hello directory to the kernel’s Makefile (change back into the linux-4.4.0-66-generic folder and open Makefile)
+
+$sudo gedit Makefile //kernel Makefile
+
+- Search line “core-y += kernel/ mm/ fs/ ipc/ security/ crypto/ block/”
+
+- Change this to “core-y += kernel/ mm/ fs/ ipc/ security/ crypto/ block/hello/”
+
+// This is to tell the compiler that the source files of our new system call (sys_hello()) are in present in the hello directory.
+
+
+8.Add system call to the table
+
+- If your system is a 64 bit system you will need to alter the syscall_64.tbl file else syscall_32.tbl
+
+$cd /usr/src/linux-4.4.0-66-generic/arch/x86/syscalls
+
+$sudo gedit syscall_64.tbl
+
+- Add the following line in the end of the file
+
+323 common hello sys_helloOR 323 i386 hello sys_hello
+
+// 323 – It is the number of the system call . It should be one plus the number of the last system call.
+
+(it was 323 in my system). This has to be noted down to make the system call in the userspace program.
+
+
+9.Add system call to header file
+
+$cd /usr/src/linux-4.4.0-66-generic/include/linux/
+
+$sudo gedit syscalls.h
+
+- add the following line to the end of the file just before the #endif statement at the very bottom.
+
+asmlinkage long sys_hello(void);
+// This defines the prototype of the function of our system call.”asmlinkage” is a key word
+
+used to indicate that all parameters of the function would be available on the stack.
+
+
+10.Now compile the linux source code according to the standard procedure.
+
+I. Now move to the directory where the extracted file is
+
+OR cd /usr/src/linux-4.4.0-66-generic
+
+II. Run the commands one by one and type the password for the user, when prompted.
+
+$sudo make menuconfig
+
+check for the file systems menu and check whether ext4 is chosen or not, if not select it and save the configuration.
+
+Note: After menuconfig run following command and then make.
+
+$sudo make -j 5 KDEB_PKGVERSION=1.arbitrary-name deb-pkg
+
+III. To Compile
+
+$sudo make
+
+IV. To Install
+
+$sudo make modules_install install
+
+Now Restart your system.
+
+
+11.Test the system call
+
+Create a “userspace.c” program in your home folder and type in the following code :-
+
+
+#include <stdio.h>
+#include <linux/kernel.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+int main()
+{
+long int r = syscall(323);
+printf(“System call sys_hello returned %ld\n”, r);
+return 0;
+}
+12.Now compile this program using the following command.
+
+$gcc userspace.c
+
+
+13.If all goes well you will not have any errors else, rectify the errors. Now run the program
+
+using the following command.
+
+$./a.out
+
+
+14.You will see the following line getting printed in the terminal if all the steps were followed correctly.
+
+“System call sys_hello returned 0“
+
+
+15.Now to check the message of the kernel you can run the following command.
+
+$dmesg
